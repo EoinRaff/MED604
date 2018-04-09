@@ -173,10 +173,15 @@ class GUISetup {
        
        
      
-                       ///////////////////////////// Group 3: Animation /////////////////////////////     
-                      
+                       ///////////////////////////// Group 3: Animation /////////////////////////////  
+                       
+                       
+                       
+        cp5.addButton("deactivate", 0, 50, 10, 80, 20).moveTo(g3);    
+        cp5.addButton("activate", 1, 140, 10, 80, 20).moveTo(g3);
+        
         cp5.addSlider(animationZ_zRotation)
-         .setPosition(10,10)
+         .setPosition(10,40)
          .setSize(200,20)
          .setRange(0,360)
          .setValue(0)

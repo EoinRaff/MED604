@@ -25,6 +25,8 @@ PeasyCam cam;
   boolean dimCntrl;
   float movement,movement1,movement2;
   
+  int animationType;
+  
 // Camera Variables:
   int camOffset;
   float fov, camZ;
@@ -72,6 +74,7 @@ void draw ()  {
   
   /// Instantiating elements
   cubeGrid.cubeShader();
+ 
   GUI.gui();
 
 }
@@ -169,4 +172,17 @@ void draw ()  {
   void animationZ_zRotation (float _deg) {
       animaZ_zRot = int(_deg);
     }
+    
+  void deactivate (int theValue) {
+      animationType = theValue; 
+    
+    }
+    
+    void activate (int theValue) {
+      animationType = theValue; 
+    
+    }
+    
+    
+    
     

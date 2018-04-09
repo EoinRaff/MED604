@@ -29,11 +29,13 @@ class gridGen {
         rotateY(boxYRotation);
         rotateZ(boxZRotation);
         
+
         if (ellipseSelect == 1) {
             sphere(boxD);
         } else {
             box(boxW,boxH,boxD);
         }
+        
         
         popMatrix(); 
       }
