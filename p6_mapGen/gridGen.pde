@@ -1,75 +1,43 @@
 class gridGen {
   
   Animator Animation = new Animator();
-  PVector zTransformation = new PVector(0,0,0);
-  PVector xTransformation = new PVector(0,0,0);
+ 
   
   public void cubeShader () {
-    
-    
-    
     
     if (!noStro) {
       stroke (stroke);
     } else {
       noStroke();
     }
-    for (int i = 1; i < planeH; i++) {
-      GlobalYpos = i;
-      
-      //zTransformation = Animation.AnimationZ(0,0,0,boxS);
-      
-      //if (dimCntrl)
-       // translate(0,0, boxD); // Default Settig
-      //else 
-       //translate(0,0, boxS);
-       
-       Animation.AnimationZ(boxW,boxH,boxD,boxS,i);
-       
-       //translate (zTransformation.x,zTransformation.y,zTransformation.z);
-       
-      //translate(0, lerp(i, planeH,0.1) , lerp(i, planeH,0.0) + 40 * sin(movement1 + sqrt(i)));
-      //rotateX(90); // Octapus
-      //rotateY(180); 
     
-      pushMatrix(); /////////////// #1: To insure the nex section in the row is not affected by the prevous (This enables the grid)
-      //if (dimCntrl)
-         //translate(0,boxH, 0);
-      //rotateX(10);
-      //rotateY(10);
+    for (int i = 1; i < planeH; i++) {
+    
+       Animation.AnimationZ(boxW,boxH,boxD,boxS,i); /////////////// #1 Phase
+       
+      pushMatrix(); /////////////// #2 Phase: To insure the nex section in the row is not affected by the prevous (This enables the grid)
       
       Animation.AnimationY (boxW,boxH,boxD,boxS);
       
-      for (int j = 1; j < planeW; j++) {
-        GlobalXpos = j;
-        
-        //xTransformation = Animation.AnimationX(0,boxS,0,0);
-        
-        
+      for (int j = 1; j < planeW; j++) { /////////////// #3 Phase:     
         Animation.AnimationX(boxW,boxH,boxD,boxS,j);
         fill(colorFill (buttonColSelct,j,i));
+
+        pushMatrix(); //// Local space rotation
         
-        //if (dimCntrl)
-        //translate(boxW, 0, 0); // Default setting
-        //else
-        //translate(boxS, 0, 0);
-        
-         //translate (xTransformation.x,xTransformation.y,xTransformation.z);
-        
-        //translate(boxS + 10 * sin(movement1 + sqrt(j)),0, 40 * sin(movement1 + sqrt(j)));
-        
-        pushMatrix(); ////// #3 Local space rotation
         rotateX(boxXRotation);
         rotateY(boxYRotation);
         rotateZ(boxZRotation);
-        box(boxW,boxH,boxD);
-        popMatrix(); ////// #3 
         
+        if (ellipseSelect == 1) {
+            sphere(boxD);
+        } else {
+            box(boxW,boxH,boxD);
+        }
         
+        popMatrix(); 
       }
-    
-      popMatrix(); /////////////// #1: 
-   
+      popMatrix(); 
     }
   }
   
@@ -89,7 +57,7 @@ color colorFill (int _select, int _xPos, int _ypos) {
         
       // MidnightDrive
       case 2 :
-        col = color (200 * sin(movement + (log(_ypos))),100,200); // Driving down the avn (Better)
+        col = color (200 * sin(movement + (log(_ypos))),100,200);
         break;
         
       default: 
@@ -102,12 +70,4 @@ color colorFill (int _select, int _xPos, int _ypos) {
 }
 
 
-
-
-// Trash (Keep for to be safe)
-
-//fill(150 + 100 * sin(movement + sqrt(i)),150 + 100 * sin(movement1 + sqrt(j)), 150 + 100 * sin(movement2 + sqrt(i+j))); // Hue spin
-        //fill(200 * sin(movement + (sqrt(i))),100,200); // Driving down the avn
-         //fill(200 * sin(movement + (log(i))),100,200); // Driving down the avn (Better)
-        //fill(100 + 200 * sin(movement - (sqrt(j))), 100 + 100 * sin(movement - ( sqrt(i))),150 + 100 * sin(movement - (sqrt(j*i)))); // Chaos
         

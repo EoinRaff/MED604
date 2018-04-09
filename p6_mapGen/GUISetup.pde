@@ -2,19 +2,23 @@ class GUISetup {
   // GUI Lib
     Accordion accordion;
     CheckBox ratioCol;
-    
-    RadioButton radio;
+
+                         ///////////////////////////// Connecting functions /////////////////////////////
   
   void GUIContent (ControlP5 GUICanvas, String _sliderGridW, String _sliderGridH, String _boxSize, 
-    String _boxRotX, String _boxRotY,String _boxRotZ, String _boxStroke, String _boxW,String _boxH, String _boxD,
+    String _boxRotX, String _boxRotY,String _boxRotZ, String _Stroke, String _boxW,String _boxH, String _boxD,
     String animationZ_zRotation) {
       
     cp5 = GUICanvas;
     
+                               ///////////////////////////// Tap colors /////////////////////////////
+                        
     color boxRotationColor = color(255, 204, 0);
     color boxSizeColor = color(255, 0, 204);
     color boxStrokeColor = color(255, 0, 0);
     color boxDimColor = color(0, 250, 0);
+    
+                        ///////////////////////////// Initializing the dropdowns /////////////////////////////
     
     Group g1 = cp5.addGroup("Grid Specifications:")
                 .setBackgroundColor(color(0, 64))
@@ -30,12 +34,9 @@ class GUISetup {
                 .setBackgroundColor(color(0, 64))
                 .setBackgroundHeight(150)
                 ;                
-    
-    //cp5.addButton("button", 10, 0, 0, 80, 20).setId(1);
-    //cp5.addButton("buttonValue", 4, 100, 90, 80, 20).setId(2);
-    
+
                            ///////////////////////////// Group 1: Grid Specification /////////////////////////////
-      //Grid
+      ///// Grid 
        cp5.addSlider(_sliderGridW)
          .setPosition(10,10)
          .setSize(200,20)
@@ -43,7 +44,7 @@ class GUISetup {
          .setValue(10)
          .moveTo(g1)
        ;
-    // Box
+       
        cp5.addSlider(_sliderGridH)
          .setPosition(10,30)
          .setSize(200,20)
@@ -52,16 +53,22 @@ class GUISetup {
          .moveTo(g1)
        ;
        
+       /////
+       
+       // Box Size 
        cp5.addSlider(_boxSize)
          .setPosition(10,70)
          .setSize(200,20)
-         .setRange(1,100)
+         .setRange(1,500)
          .setValue(30)
          .setColorActive(boxSizeColor)
          .setColorForeground(boxSizeColor)
          .moveTo(g1)
        ;
-     
+       
+       /////
+       
+       // Box Size 
        cp5.addSlider(_boxRotX)
          .setPosition(10,100)
          .setSize(200,20)
@@ -91,7 +98,11 @@ class GUISetup {
          .setColorForeground(boxRotationColor)
          .moveTo(g1)
        ;
-     
+       
+       /////
+       
+       
+       // Dimension control
        cp5.addCheckBox("checkBox")
          .setPosition(10, 170)
          .setColorForeground(color(120))
@@ -104,7 +115,8 @@ class GUISetup {
          .addItem("Dimension Control (Disables Pitch Off)", 0)
          .moveTo(g1)
        ;
-
+       
+       // Specific Box Dimension
        cp5.addSlider(_boxW)
          .setPosition(10,200)
          .setSize(200,20)
@@ -135,10 +147,18 @@ class GUISetup {
          .moveTo(g1)
        ;
        
+        /////
+       
                        ///////////////////////////// Group 2: Pixel Design /////////////////////////////
-                     
-      cp5.addSlider(_boxStroke)
-         .setPosition(10,10)
+                       
+      // Shape Selection               
+      cp5.addButton("ellipse", 1, 50, 10, 80, 20).moveTo(g2);
+      cp5.addButton("box", 0 , 140, 10, 80, 20).moveTo(g2);
+      /////
+      
+      // Stroke
+      cp5.addSlider(_Stroke)
+         .setPosition(10,40)
          .setSize(200,20)
          .setRange(0,255)
          .setValue(0)
@@ -147,9 +167,9 @@ class GUISetup {
          .moveTo(g2)
        ;
        
-       cp5.addButton("uniform", 0, 10, 40, 80, 20).moveTo(g2);
-       cp5.addButton("hue_Flow", 1, 100, 40, 80, 20).moveTo(g2);
-       cp5.addButton("midnight_Drive", 2, 190, 40, 80, 20).moveTo(g2);
+       cp5.addButton("uniform", 0, 10, 70, 80, 20).moveTo(g2);
+       cp5.addButton("hue_Flow", 1, 100, 70, 80, 20).moveTo(g2);
+       cp5.addButton("midnight_Drive", 2, 190, 70, 80, 20).moveTo(g2);
        
        
      
@@ -166,18 +186,18 @@ class GUISetup {
        ;               
                        
                        
-      
-     
-     // Initialization of the groups
-     accordion = cp5.addAccordion("acc")
+                     ///////////////////////////// Placing the tab ////////////////////////////
+ 
+       accordion = cp5.addAccordion("acc")
                  .setPosition(10,10)
-                 .setWidth(300)
+                 .setWidth(310)
                  .addItem(g1)
                  .addItem(g2)
                  .addItem(g3)
                
                  ;
      
+                   ///////////////////////////// Tab attributes ////////////////////////////
      
      
     cp5.mapKeyFor(new ControlKey() {public void keyEvent() {accordion.open(0,1,2);}}, 'o');
@@ -197,7 +217,7 @@ class GUISetup {
     
   }
 
-  
+                 ///////////////////////////// Drawing tabs on screen ////////////////////////////
   
   void gui() {
     hint(DISABLE_DEPTH_TEST);
@@ -206,9 +226,4 @@ class GUISetup {
     cam.endHUD();
     hint(ENABLE_DEPTH_TEST);
   }
-  
-  
-
-  
-  
 }
