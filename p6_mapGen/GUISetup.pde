@@ -20,8 +20,9 @@ class GUISetup {
     color box_aniSelectors = color(79, 36, 18);
     color boxStrokeColorRotation0 = color(212,52,143);
     color boxStrokeColorRotation1 = color(124, 185, 2);
-    
-    
+    color sliderGradientR = color(200, 0, 200);
+    color sliderGradientG = color(150, 0, 150);
+    color sliderGradientB = color(100, 0 , 100);
     
     
                         ///////////////////////////// Initializing the dropdowns /////////////////////////////
@@ -33,7 +34,7 @@ class GUISetup {
                 
     Group g2 = cp5.addGroup("Pixel Design:")
                 .setBackgroundColor(color(0, 64))
-                .setBackgroundHeight(150)
+                .setBackgroundHeight(300)
                 ;
 
     Group g3 = cp5.addGroup("Animation: ")
@@ -173,9 +174,77 @@ class GUISetup {
          .moveTo(g2)
        ;
        
+       
+       // Color mode
        cp5.addButton("uniform", 0, 10, 70, 80, 20).moveTo(g2);
        cp5.addButton("hue_Flow", 1, 100, 70, 80, 20).moveTo(g2);
        cp5.addButton("midnight_Drive", 2, 190, 70, 80, 20).moveTo(g2);
+       cp5.addButton("gradient", 3, 10, 100, 80, 20).moveTo(g2);
+       /////
+       
+       // Gradient cntr
+       cp5.addSlider("gradientR_level")
+         .setPosition(10,130)
+         .setSize(200,20)
+         .setRange(0,100)
+         .setValue(0)
+         .setColorActive(sliderGradientR)
+         .setColorForeground(sliderGradientR)
+         .moveTo(g2)
+       ;
+       
+       cp5.addSlider("gradientR_pow")
+         .setPosition(10,155)
+         .setSize(200,20)
+         .setRange(0,100)
+         .setValue(0)
+         .setColorActive(sliderGradientR)
+         .setColorForeground(sliderGradientR)
+         .moveTo(g2)
+       ;
+       
+       cp5.addSlider("gradientG_level")
+         .setPosition(10,185)
+         .setSize(200,20)
+         .setRange(0,100)
+         .setValue(0)
+         .setColorActive(sliderGradientG)
+         .setColorForeground(sliderGradientG)
+         .moveTo(g2)
+       ;
+       
+       cp5.addSlider("gradientG_pow")
+         .setPosition(10,210)
+         .setSize(200,20)
+         .setRange(0,100)
+         .setValue(0)
+         .setColorActive(sliderGradientG)
+         .setColorForeground(sliderGradientG)
+         .moveTo(g2)
+       ;
+       
+       cp5.addSlider("gradientB_level")
+         .setPosition(10,240)
+         .setSize(200,20)
+         .setRange(0,100)
+         .setValue(0)
+         .setColorActive(sliderGradientB)
+         .setColorForeground(sliderGradientB)
+         .moveTo(g2)
+       ;
+       
+       cp5.addSlider("gradientB_pow")
+         .setPosition(10,265)
+         .setSize(200,20)
+         .setRange(0,100)
+         .setValue(0)
+         .setColorActive(sliderGradientB)
+         .setColorForeground(sliderGradientB)
+         .moveTo(g2)
+       ;
+       
+       
+       /////
        
        
      
@@ -275,6 +344,11 @@ class GUISetup {
          .setColorForeground(boxStrokeColorRotation1)
          .moveTo(g3)
        ;     
+       
+        
+       
+       
+       
                      ///////////////////////////// Placing the tab ////////////////////////////
  
        accordion = cp5.addAccordion("acc")

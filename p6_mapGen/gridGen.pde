@@ -42,7 +42,7 @@ class gridGen {
     }
   }
   
-color colorFill (int _select, int _xPos, int _ypos) {
+color colorFill (int _select, int _xPos, int _yPos) {
     color col = color (0,0,0);
     
     switch (_select) {
@@ -53,12 +53,16 @@ color colorFill (int _select, int _xPos, int _ypos) {
         
      // HueFlow
       case 1 :
-        col = color (150 + 100 * sin(movement + sqrt(_xPos)),150 + 100 * sin(movement1 + sqrt(_ypos)), 150 + 100 * sin(movement2 + sqrt(_xPos+_ypos)));
+        col = color (150 + 100 * sin(movement + sqrt(_xPos)),150 + 100 * sin(movement1 + sqrt(_yPos)), 150 + 100 * sin(movement2 + sqrt(_xPos+_yPos)));
         break;
         
       // MidnightDrive
       case 2 :
-        col = color (200 * sin(movement + (log(_ypos))),100,200);
+        col = color (200 * sin(movement + (log(_yPos))),100,200);
+        break;
+        
+      case 3 :
+        col = color (lerp(_xPos + _yPos , gradientR / planeH * planeW, powR), lerp(_xPos + _yPos , gradientG / planeH * planeW, powG), lerp(_xPos + _yPos , gradientB / planeH * planeW, powB));
         break;
         
       default: 

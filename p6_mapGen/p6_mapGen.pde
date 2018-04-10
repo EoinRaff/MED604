@@ -25,6 +25,9 @@ PeasyCam cam;
   boolean dimCntrl;
   float movement,movement1,movement2;
   
+  float gradientR,gradientG,gradientB;
+  float powR,powG,powB;
+  
   int animationType, activateAni;
   
 // Camera Variables:
@@ -167,6 +170,35 @@ void draw ()  {
       buttonColSelct = theValue; 
     
     }
+    
+    void gradient (int theValue) {
+      buttonColSelct = theValue; 
+    
+    }
+    
+    void gradientR_level (float _deg) {
+      gradientR = _deg;
+   }
+     void gradientR_pow (float _deg) {
+      powR = _deg;
+   }
+   
+   void gradientG_level (float _deg) {
+      gradientG = _deg;
+   }
+     void gradientG_pow (float _deg) {
+      powG = _deg;
+   }
+   
+   void gradientB_level (float _deg) {
+      gradientB = _deg;
+   }
+     void gradientB_pow (float _deg) {
+      powB = _deg;
+   }
+    
+    
+    
     
    ///////
   
