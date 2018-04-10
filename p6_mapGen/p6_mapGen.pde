@@ -14,7 +14,7 @@ PeasyCam cam;
    gridGen cubeGrid;
 
 // Geometric Variables:
-  int planeW, planeH;
+  int planeW, planeD, planeH;
   int boxXRotation,boxYRotation,boxZRotation;
   float animaZ_zRot, animaZ_xRot, animaZ_yRot,animaX_xRot,animaX_yRot,animaX_zRot;
   int stroke;
@@ -85,13 +85,19 @@ void draw ()  {
   
                               ///////////////////////////// GUI Functions ///////////////////////////////
                               
-  void grid_hidth(float _w) {
+  void grid_width(float _w) {
     planeW = int(_w);
+  }
+  
+  void grid_dimension(float _h) {
+    planeD = int(_h);
   }
   
   void grid_height(float _h) {
     planeH = int(_h);
   }
+  
+  
   
   // Box cosmetics
   

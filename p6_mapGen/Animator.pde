@@ -93,4 +93,7 @@ class Animator {
       
   }
 }
+
+/// Noise animation
+//translate (boxD  + 100 * noise(j,i) * log(j), boxD  + 100 * noise(j,i) * log(j),boxD  + 100 * noise(j,i) * log(j));
  

@@ -25,6 +25,7 @@ class GUISetup {
     color sliderGradientB = color(100, 0 , 100);
     
     
+    
                         ///////////////////////////// Initializing the dropdowns /////////////////////////////
     
     Group g1 = cp5.addGroup("Grid Specifications:")
@@ -44,7 +45,7 @@ class GUISetup {
 
                            ///////////////////////////// Group 1: Grid Specification /////////////////////////////
       ///// Grid 
-       cp5.addSlider(_sliderGridW)
+       cp5.addSlider("grid_width")
          .setPosition(10,10)
          .setSize(200,20)
          .setRange(1,100)
@@ -52,8 +53,16 @@ class GUISetup {
          .moveTo(g1)
        ;
        
-       cp5.addSlider(_sliderGridH)
+       cp5.addSlider("grid_dimension")
          .setPosition(10,30)
+         .setSize(200,20)
+         .setRange(1,100)
+         .setValue(10)
+         .moveTo(g1)
+       ;
+       
+       cp5.addSlider("grid_height")
+         .setPosition(10,50)
          .setSize(200,20)
          .setRange(1,100)
          .setValue(10)
@@ -64,7 +73,7 @@ class GUISetup {
        
        // Box Size 
        cp5.addSlider(_boxSize)
-         .setPosition(10,70)
+         .setPosition(10,90)
          .setSize(200,20)
          .setRange(1,500)
          .setValue(30)
@@ -77,7 +86,7 @@ class GUISetup {
        
        // Box Size 
        cp5.addSlider(_boxRotX)
-         .setPosition(10,100)
+         .setPosition(10,130)
          .setSize(200,20)
          .setRange(0,360)
          .setValue(0)
@@ -87,7 +96,7 @@ class GUISetup {
        ;
      
        cp5.addSlider(_boxRotY)
-         .setPosition(10,120)
+         .setPosition(10,150)
          .setSize(200,20)
          .setRange(0,360)
          .setValue(0)
@@ -97,7 +106,7 @@ class GUISetup {
        ;
      
        cp5.addSlider(_boxRotZ)
-         .setPosition(10,140)
+         .setPosition(10,170)
          .setSize(200,20)
          .setRange(0,360)
          .setValue(0)
@@ -111,7 +120,7 @@ class GUISetup {
        
        // Dimension control
        cp5.addCheckBox("checkBox")
-         .setPosition(10, 170)
+         .setPosition(10, 205)
          .setColorForeground(color(120))
          .setColorActive(color(255))
          .setColorLabel(color(255))
@@ -125,7 +134,7 @@ class GUISetup {
        
        // Specific Box Dimension
        cp5.addSlider(_boxW)
-         .setPosition(10,200)
+         .setPosition(10,240)
          .setSize(200,20)
          .setRange(0,500)
          .setValue(10)
@@ -135,7 +144,7 @@ class GUISetup {
        ;
        
        cp5.addSlider(_boxH)
-         .setPosition(10,220)
+         .setPosition(10,260)
          .setSize(200,20)
          .setRange(0,500)
          .setValue(10)
@@ -145,7 +154,7 @@ class GUISetup {
        ;
        
        cp5.addSlider(_boxD)
-         .setPosition(10,240)
+         .setPosition(10,280)
          .setSize(200,20)
          .setRange(0,500)
          .setValue(10)

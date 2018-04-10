@@ -11,36 +11,54 @@ class gridGen {
       noStroke();
     }
     
-    for (int i = 1; i < planeH; i++) {
+    for (int i = 1; i < planeD; i++) { /////////////// #1 Phase
     
-       Animation.AnimationZ(boxW,boxH,boxD,boxS,i); /////////////// #1 Phase
+       Animation.AnimationZ(boxW,boxH,boxD,boxS,i); 
        
-      pushMatrix(); /////////////// #2 Phase: To insure the nex section in the row is not affected by the prevous (This enables the grid)
+       
+      
+      pushMatrix(); 
       
       Animation.AnimationY (boxW,boxH,boxD,boxS,i);
       
-      for (int j = 1; j < planeW; j++) { /////////////// #3 Phase:     
+      for (int j = 1; j < planeW; j++) { /////////////// #2 Phase:  
+       
         Animation.AnimationX(boxW,boxH,boxD,boxS,j,i);
         fill(colorFill (buttonColSelct,j,i));
 
-        pushMatrix(); //// Local space rotation
         
-        rotateX(boxXRotation);
-        rotateY(boxYRotation);
-        rotateZ(boxZRotation);
+        
+        pushMatrix();
+          for (int q = 0; q < planeH; q++) { /////////////// # 3 Phase: Stacking blocks
+          
+            translate (0,boxD+boxD,0);
+            
+            pushMatrix(); //// Rows
 
-        if (ellipseSelect == 1) {
-            sphere(boxD);
-        } else {
-            box(boxW,boxH,boxD);
-        }
-        
-        
+              pushMatrix(); // Local space
+               rotateX(boxXRotation);
+               rotateY(boxYRotation);
+               rotateZ(boxZRotation);
+
+                if (ellipseSelect == 1) {
+                   sphere(boxD);
+                } else {
+                   box(boxW,boxH,boxD);
+                }
+            
+              popMatrix(); 
+            
+            popMatrix(); 
+            
+          }
+          
         popMatrix(); 
+  
       }
       popMatrix(); 
     }
   }
+  
   
 color colorFill (int _select, int _xPos, int _yPos) {
     color col = color (0,0,0);
