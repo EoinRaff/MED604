@@ -7,7 +7,7 @@ class GUISetup {
   
   void GUIContent (ControlP5 GUICanvas, String _sliderGridW, String _sliderGridH, String _boxSize, 
     String _boxRotX, String _boxRotY,String _boxRotZ, String _Stroke, String _boxW,String _boxH, String _boxD,
-    String animationZ_zRotation) {
+    String animationZ_zRotation) { /////////// note to self, there is no need for this!
       
     cp5 = GUICanvas;
     
@@ -17,6 +17,12 @@ class GUISetup {
     color boxSizeColor = color(255, 0, 204);
     color boxStrokeColor = color(255, 0, 0);
     color boxDimColor = color(0, 250, 0);
+    color box_aniSelectors = color(79, 36, 18);
+    color boxStrokeColorRotation0 = color(212,52,143);
+    color boxStrokeColorRotation1 = color(124, 185, 2);
+    
+    
+    
     
                         ///////////////////////////// Initializing the dropdowns /////////////////////////////
     
@@ -32,7 +38,7 @@ class GUISetup {
 
     Group g3 = cp5.addGroup("Animation: ")
                 .setBackgroundColor(color(0, 64))
-                .setBackgroundHeight(150)
+                .setBackgroundHeight(300)
                 ;                
 
                            ///////////////////////////// Group 1: Grid Specification /////////////////////////////
@@ -176,21 +182,99 @@ class GUISetup {
                        ///////////////////////////// Group 3: Animation /////////////////////////////  
                        
                        
-                       
+        // Animation Activation               
         cp5.addButton("deactivate", 0, 50, 10, 80, 20).moveTo(g3);    
         cp5.addButton("activate", 1, 140, 10, 80, 20).moveTo(g3);
         
-        cp5.addSlider(animationZ_zRotation)
-         .setPosition(10,40)
+        // Animation Selection
+        cp5.addButton("octopus")
+          .setValue(0)
+          .setPosition(10,40)
+          .setSize(80,20)
+          .setColorBackground(box_aniSelectors)
+          .moveTo(g3) ;
+          
+        cp5.addButton("pulse")
+          .setValue(1)
+          .setPosition(100,70)
+          .setSize(80,20)
+          .setColorBackground(box_aniSelectors)
+          .moveTo(g3) ;
+          
+        cp5.addButton("portal")
+          .setValue(2)
+          .setPosition(100,40)
+          .setSize(80,20)
+          .setColorBackground(box_aniSelectors)
+          .moveTo(g3) ;  
+          
+       cp5.addButton("nova")
+          .setValue(3)
+          .setPosition(10,70)
+          .setSize(80,20)
+          .setColorBackground(box_aniSelectors)
+          .moveTo(g3) ;     
+    
+       cp5.addSlider("animationZ_xRotation")
+         .setPosition(10,100)
          .setSize(200,20)
          .setRange(0,360)
          .setValue(0)
-         .setColorActive(boxStrokeColor)
-         .setColorForeground(boxStrokeColor)
+         .setColorActive(boxStrokeColorRotation0)
+         .setColorForeground(boxStrokeColorRotation0)
          .moveTo(g3)
-       ;               
+       ;  
+       
+       cp5.addSlider("animationZ_yRotation")
+         .setPosition(10,125)
+         .setSize(200,20)
+         .setRange(0,360)
+         .setValue(0)
+         .setColorActive(boxStrokeColorRotation0)
+         .setColorForeground(boxStrokeColorRotation0)
+         .moveTo(g3)
+       ;
+       
+       cp5.addSlider("animationZ_zRotation")
+         .setPosition(10,150)
+         .setSize(200,20)
+         .setRange(0,360)
+         .setValue(0)
+         .setColorActive(boxStrokeColorRotation0)
+         .setColorForeground(boxStrokeColorRotation0)
+         .moveTo(g3)
+       ;  
+       
+       
+       cp5.addSlider("animationX_xRotation")
+         .setPosition(10,180)
+         .setSize(200,20)
+         .setRange(0,360)
+         .setValue(0)
+         .setColorActive(boxStrokeColorRotation1)
+         .setColorForeground(boxStrokeColorRotation1)
+         .moveTo(g3)
+       ;  
                        
-                       
+       cp5.addSlider("animationX_yRotation")
+         .setPosition(10,205)
+         .setSize(200,20)
+         .setRange(0,360)
+         .setValue(0)
+         .setColorActive(boxStrokeColorRotation1)
+         .setColorForeground(boxStrokeColorRotation1)
+         .moveTo(g3)
+       ;  
+       
+       cp5.addSlider("animationX_zRotation")
+         .setPosition(10,230)
+         .setSize(200,20)
+         .setRange(0,360)
+         .setValue(0)
+         .setColorActive(boxStrokeColorRotation1)
+         .setColorForeground(boxStrokeColorRotation1)
+         .moveTo(g3)
+       ;     
                      ///////////////////////////// Placing the tab ////////////////////////////
  
        accordion = cp5.addAccordion("acc")
@@ -214,7 +298,7 @@ class GUISetup {
     cp5.mapKeyFor(new ControlKey() {public void keyEvent() {accordion.setCollapseMode(ControlP5.SINGLE);}}, '4');
     cp5.mapKeyFor(new ControlKey() {public void keyEvent() {cp5.remove("myGroup1");}}, '0');
     
-    accordion.open(2);
+    accordion.open(0,1,2);
     
     accordion.setCollapseMode(Accordion.MULTI);
      

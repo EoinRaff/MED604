@@ -17,10 +17,10 @@ class gridGen {
        
       pushMatrix(); /////////////// #2 Phase: To insure the nex section in the row is not affected by the prevous (This enables the grid)
       
-      Animation.AnimationY (boxW,boxH,boxD,boxS);
+      Animation.AnimationY (boxW,boxH,boxD,boxS,i);
       
       for (int j = 1; j < planeW; j++) { /////////////// #3 Phase:     
-        Animation.AnimationX(boxW,boxH,boxD,boxS,j);
+        Animation.AnimationX(boxW,boxH,boxD,boxS,j,i);
         fill(colorFill (buttonColSelct,j,i));
 
         pushMatrix(); //// Local space rotation
@@ -28,7 +28,6 @@ class gridGen {
         rotateX(boxXRotation);
         rotateY(boxYRotation);
         rotateZ(boxZRotation);
-        
 
         if (ellipseSelect == 1) {
             sphere(boxD);

@@ -16,7 +16,7 @@ PeasyCam cam;
 // Geometric Variables:
   int planeW, planeH;
   int boxXRotation,boxYRotation,boxZRotation;
-  int animaZ_zRot;
+  float animaZ_zRot, animaZ_xRot, animaZ_yRot,animaX_xRot,animaX_yRot,animaX_zRot;
   int stroke;
   boolean noStro;
   int ellipseSelect;
@@ -25,14 +25,15 @@ PeasyCam cam;
   boolean dimCntrl;
   float movement,movement1,movement2;
   
-  int animationType;
+  int animationType, activateAni;
   
 // Camera Variables:
   int camOffset;
   float fov, camZ;
 
 void setup () {
-  size (920, 560, P3D); // Demension of the LED screen in the light lab (width: 920, Height 560. )
+  //size (920, 560, P3D); // Demension of the LED screen in the light lab (width: 920, Height 560. )
+  size (1420, 900, P3D);
   
   //colorMode(HSB, 100);
 
@@ -169,19 +170,71 @@ void draw ()  {
     
    ///////
   
-  void animationZ_zRotation (float _deg) {
+  // Animation Rotation   
+  void animationZ_xRotation (float _deg) {
+      animaZ_xRot = int(_deg);
+   }
+   
+   void animationZ_yRotation (float _deg) {
+      animaZ_yRot = int(_deg);
+   }
+   
+    void animationZ_zRotation (float _deg) {
       animaZ_zRot = int(_deg);
     }
+   
+   
+   void animationX_xRotation (float _deg) {
+      animaX_xRot = int(_deg);
+    }
     
+  void animationX_yRotation (float _deg) {
+      animaX_xRot = int(_deg);
+   }
+   
+   void animationX_zRotation (float _deg) {
+      animaX_zRot = int(_deg);
+   }
+   
+   ///////
+  
+  
+  // Animation Activators
   void deactivate (int theValue) {
-      animationType = theValue; 
+      activateAni = theValue;
     
     }
     
     void activate (int theValue) {
+      activateAni = theValue;
+    
+    }
+    
+    //////
+    
+    // Animation selectors
+    
+    void octopus (int theValue) {
       animationType = theValue; 
     
     }
+    
+    void portal (int theValue) {
+      animationType = theValue; 
+    
+    }
+    
+    void pulse (int theValue) {
+      animationType = theValue; 
+    
+    }
+    
+    void nova (int theValue) {
+      animationType = theValue; 
+    
+    }
+    
+    //////
     
     
     
