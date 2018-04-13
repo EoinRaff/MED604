@@ -13,6 +13,7 @@ FloatList amplitudes;       // Create a list of floats to store amplitudes
 float scale = 5.0;          // Declare a scaling factor
 float smoothFactor = 0.25;  // Declare a smooth factor
 float sum;                  // Used for smoothing
+float mean;                 // Deifne the mean variable 
 
 int counter = 1;            // Used to keep count and restart the sampling of amplitudes
 int timeBetween = 5000;     // Decide the time between means
@@ -51,11 +52,12 @@ void draw()
   
   if (timeElapsed > counter*timeBetween)              // If 5 more seconds have passed calculate the mean
   {
-    float mean = calcAverageAmp(amplitudes);          // Call the calcAverageAmp method to calculate the mean over the last 5 seconds
+    mean = calcAverageAmp(amplitudes);          // Call the calcAverageAmp method to calculate the mean over the last 5 seconds
     println(mean);                                    // Print the mean
     counter++;                                        // Add counter to start next 5 seconds
     amplitudes.clear();                               // Clear the list to only get mean over the latest 5 seconds
   }
+  rect(20, 20, mean*10, mean*10);                     // Draw a rect showing the last mean
 }
 
 float calcAverageAmp(FloatList in)         // Method to calculate the mean of the last 5 seconds of amplitudes
