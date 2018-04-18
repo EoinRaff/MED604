@@ -6,7 +6,8 @@ float mov = 0;
 
 void setup()
 {
-  size(960, 520);
+  size(960, 520); //Development
+  //size(96, 52); //LED lab
   background(0);
   columns = 96;
   rows = 52;

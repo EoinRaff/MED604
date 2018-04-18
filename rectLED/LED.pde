@@ -8,7 +8,7 @@ class LED{
     this.h = h;
   }
   public void display(color c){
-    //rectMode(CENTER);
+    noStroke();
     fill(c);
     rect(x, y, w, h);
   }
