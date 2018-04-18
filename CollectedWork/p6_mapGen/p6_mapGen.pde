@@ -47,6 +47,8 @@ PeasyCam cam;
 void setup () {
   size (920, 560, P3D); // Demension of the LED screen in the light lab (width: 920, Height 560. )
   //size (1420, 900, P3D);
+   
+  frameRate(60);
   
   //colorMode(HSB, 100);
 
@@ -79,8 +81,9 @@ void setup () {
 
 void draw ()  {
   
-  background(70);
-  
+  background(50);
+  // println(frameRate);
+
   // Transfer function attributes
   movement -= 0.1;
   movement1 -= 0.15;
