@@ -1,5 +1,6 @@
 int rows;
 int columns;
+public LED[][] screen;
 
 void setup()
 {
@@ -7,19 +8,24 @@ void setup()
   background(0);
   columns = 96;
   rows = 52;
+  screen = new LED[columns][rows];
 }
+
 void draw()
 {
   background(0);
   generateGrid();
 }
+
 void generateGrid() {
   float h = height/rows;
   float w = width/columns;
   for (int y = 0; y < rows; y ++) {
-    fill(255);
     for (int x = 0; x < columns; x++) {
-      rect(x*w, y*h, w, h);
+      int c = 255;
+      //int c = Animator(animationType, x, y)
+      screen[x][y] = new LED(x*w, y*h, w, h);
+      screen[x][y].display(c);
     }
   }
 }
