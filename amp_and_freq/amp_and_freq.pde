@@ -1,15 +1,17 @@
 import ddf.minim.analysis.*;  //Shoud be imported in the main script
 import ddf.minim.*;           //Shoud be imported in the main script
 
-
 AudioProcessing mySound;
 
+
 void setup()  {    
-  mySound = new AudioProcessing();   
+  mySound = new AudioProcessing();  
+  size(500, 500);
+  background(255, 255, 255);
 }    
 
 void draw()  {
-  float var = mySound.meanAmplitude();
   float fre = mySound.meanFrequency();
-  println("Amp: " + var + " Freq:" + fre );
+  float amp = mySound.meanAmplitude();
+  println("Amp: " + amp + " Freq: " + fre );
 }
