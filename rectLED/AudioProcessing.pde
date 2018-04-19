@@ -1,4 +1,4 @@
-
+  
 /* This is a class for ALL the sound processing. 
  It got four methods, one for real-time amplitude, one for real-time frequency,
  one for amplitude over time and one for frequency over time */
@@ -20,16 +20,17 @@ class AudioProcessing {
   float ampThreshold = 0.3;
 
   int counter = 1;            // Used to keep count and restart the sampling of amplitudes
-  int timeBetween = 5000;     // Decide the time between means
+  int timeBetween;     // Decide the time between means
   int time = millis();        // Count time between means
   int time_amp = millis();
 
-  AudioProcessing() {         // Class constructor
+  AudioProcessing(int updateMillis) {         // Class constructor
     minim = new Minim(this);
     in = minim.getLineIn();
     fft = new FFT( in.bufferSize(), in.sampleRate() );
     amplitudes = new FloatList();
     frequencies = new FloatList();
+    timeBetween = updateMillis;
   }
 
   float rtAmplitude() {

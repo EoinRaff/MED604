@@ -1,10 +1,15 @@
+import ddf.minim.analysis.*;  //Shoud be imported in the main script
+import ddf.minim.*;           //Shoud be imported in the main script
+
 int rows;
 int columns;
 LED[][] screen;
 Animator anim;
+AudioProcessing AP;
+
 float mov = 0; //mov and similar variables should later be replaces with Amp and Frq and so on.
 float amp = 0;
-
+float amp_m, amp_rt, frq_m, frq_rt;
 void setup()
 {
   size(960, 520); //Development
@@ -12,26 +17,17 @@ void setup()
   background(0);
   columns = 96;
   rows = 52;
+  
   screen = new LED[columns][rows];
-  anim = new Animator();
+  AP = new AudioProcessing(1000);
+  anim = new Animator(columns, rows, AP);
 }
 
 void draw()
 {
   background(0);
   generateGrid();
-  UpdatePlaceholders();
-  anim.UpdateParameters(mov, amp);
-}
-
-void mouseClicked() {
-}
-
-void UpdatePlaceholders() {
-  mov += 0.05;
-  if (amp > 0) {
-    amp -= 0.05;
-  }
+  anim.UpdateVariables();
 }
 
 void generateGrid() {
@@ -39,7 +35,7 @@ void generateGrid() {
   float w = width/columns;
   for (int y = 0; y < rows; y ++) {
     for (int x = 0; x < columns; x++) {
-      color c = anim.Animate("Test", x, y);
+      color c = anim.Animate("Natural", x, y);
       screen[x][y] = new LED(x*w, y*h, w, h);
       screen[x][y].display(c);
     }
