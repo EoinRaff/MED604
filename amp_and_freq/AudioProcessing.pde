@@ -107,6 +107,6 @@ class AudioProcessing {
   void stop() {
   in.close();
   minim.stop();  
-}
+  }
   
 }
