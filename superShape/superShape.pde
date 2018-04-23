@@ -11,12 +11,23 @@ Based on Tutorials by Daniel Shiffman:
 
 PeasyCam cam;
 PVector[][] vertices;
-int total = 50;
+int total = 100;
 
 void setup() {
   size(960, 520, P3D);
   cam = new PeasyCam(this, 500);
   vertices = new PVector[total + 1][total + 1];
+}
+float a = 1;
+float b = 1;
+float supershape(float theta, float m, float n1, float n2, float n3) {
+  float t1 = abs((1/a) * cos(m *theta / 4));
+  t1 = pow(t1, n2);
+  float t2 = abs((1/b) * sin(m * theta / 4));
+  t2 = pow(t2, n3);
+  float t3 = t1 + t2;
+  float r = pow(t3, -1/n1);
+  return r;
 }
 
 void draw() {
@@ -24,26 +35,34 @@ void draw() {
   lights();
   float r = 200;  
   for (int i = 0; i < total+1; i++) {
-    float lat = map(i, 0, total, 0, PI);
+    float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+    float r2 = supershape(lat,1, 0.3, 0.5, 0.5);
 
     for (int j = 0; j < total+1; j++) {
-      float lon = map(j, 0, total, 0, TWO_PI);
+      float lon = map(j, 0, total, -PI, PI);
+      float r1 = supershape(lon,  5, 0.1, 1.7, 1.7 );
 
+      //why is there r1 and r2.
+      /*
+      two 2d supershapes with their own radii.
+       */
       //convert to cartesi  an coordinates.
-      float x = r * sin(lat) * cos(lon);
-      float y = r * sin(lat) * sin(lon);
-      float z = r * cos(lat);
+      float x = r * r1 * cos(lon) * r2 * cos(lat);
+      float y = r * r1 * sin(lon) * r2 *cos(lat);
+      float z = r * r2 * sin(lat);
 
       vertices[i][j] = new PVector(x, y, z);
     }
   }
-
+  noStroke();
+  //stroke(255);
+  //  noFill();
+  fill(50, 200, 75);
   for (int i = 0; i < total; i++) {
     beginShape(TRIANGLE_STRIP);
     for (int j = 0; j < total + 1; j++) {
       PVector v1 = vertices[i][j];
       PVector v2 = vertices[i+1][j];
-      stroke(255);
       vertex(v1.x, v1.y, v1.z);
       vertex(v2.x, v2.y, v2.z);
     }
