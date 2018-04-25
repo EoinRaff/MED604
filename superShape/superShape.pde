@@ -37,31 +37,30 @@ float r = 100;
 
 Shape TestShapeA; 
 Shape TestShapeB;
+
 Shape ShapeA; 
 Shape ShapeB; 
 
-Shape s0a = new Shape(0.0, 0.1, 1.7, 1.7, 1.0, 1.0);
-Shape s0b = new Shape(0.0, 0.2, 0.5, 0.5, 1.0, 1.0);
+Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24);
+Shape flowerB = new Shape(10.0, 2.0, 2.0, 2.0);
 
-Shape s1a = new Shape(5.0, 0.1, 1.7, 1.7, 1.0, 1.0);
-Shape s1b = new Shape(1.0, 0.2, 0.5, 0.5, 1.0, 1.0);
+Shape star5A  = new Shape(4.89, 0.38, 1.12, 0.47);
+Shape star5b  = new Shape(9.09, 0.71, 0.79, 1.12);
 
-Shape s2a = new Shape(5.2, 0.04, 1.7, 1.7, 1.0, 1.0);
-Shape s2b = new Shape(0.001, 1.0, 1.0, 1.0, 1.0, 1.0);
+Shape spinningTopA  = new Shape(0.59, 2.0, 2.0, 2.0);
+Shape spinningTopB  = new Shape(3.99, 0.58, 1.24, 0.96);
 
-Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24, 0.0, 0.0);
-Shape flowerB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape star5A = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape star5b = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape spinningTopA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape spinningTopB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape xWingA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape xWingB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape speakerA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape speakerB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape lemonA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-Shape lemonB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape xWingA  = new Shape(10.0, 0.5, 0.06, 0.53);
+Shape xWingB  = new Shape(7.89, 1.69, 1.24, 0.96);
 
+Shape speakerA  = new Shape(4.0, 0.3, 0.3, 0.3);
+Shape speakerB  = new Shape(18.0, 1.0, 1.0, 0.5);
+
+Shape lemonA  = new Shape(18.0, 1.0, 1.0, 0.5);
+Shape lemonB  = new Shape(3.0, 0.3, 0.3, 0.85);
+
+Shape AdamA = new Shape(3.99, 0.56, 0.59, 1.59);
+Shape AdamB = new Shape(3.29, 1.31, 1.66, 0.96);
 
 ArrayList<Shape> ShapesA = new ArrayList<Shape>();
 ArrayList<Shape> ShapesB = new ArrayList<Shape>();
