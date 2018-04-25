@@ -1,6 +1,10 @@
+import controlP5.*;
+
 import peasy.*;
 import peasy.org.apache.commons.math.*;
 import peasy.org.apache.commons.math.geometry.*;
+
+import processing.opengl.*;
 
 /*
 Based on Tutorials by Daniel Shiffman:
@@ -9,10 +13,33 @@ Based on Tutorials by Daniel Shiffman:
  Part 2:   https://www.youtube.com/watch?v=akM4wMZIBWg
  */
 
+PMatrix3D currCameraMatrix;
+PGraphics3D g3;
+
+boolean GUI;
+ControlP5 controller;
+color CL = #00FF1B;
+int ON_OF = 0;
+float aM = 1.0;
+float an1 = 1.0;
+float an2 = 1.0;
+float an3 = 1.0;
+
+float bM = 1.0;
+float bn1 = 1.0;
+float bn2 = 1.0;
+float bn3 = 1.0;
+
 PeasyCam cam;
 PVector[][] vertices;
 int total = 100;
-float r = 200;  
+float r = 100;  
+
+Shape TestShapeA; 
+Shape TestShapeB; 
+
+Shape s0a = new Shape(0.0, 0.1, 1.7, 1.7, 1.0, 1.0);
+Shape s0b = new Shape(0.0, 0.2, 0.5, 0.5, 1.0, 1.0);
 
 Shape s1a = new Shape(5.0, 0.1, 1.7, 1.7, 1.0, 1.0);
 Shape s1b = new Shape(1.0, 0.2, 0.5, 0.5, 1.0, 1.0);
@@ -20,24 +47,50 @@ Shape s1b = new Shape(1.0, 0.2, 0.5, 0.5, 1.0, 1.0);
 Shape s2a = new Shape(5.2, 0.04, 1.7, 1.7, 1.0, 1.0);
 Shape s2b = new Shape(0.001, 1.0, 1.0, 1.0, 1.0, 1.0);
 
-Shape shape1;
-Shape shape2;
-
 
 void setup() {
-  size(960, 520, P3D);
-  cam = new PeasyCam(this, 500);
+  size(900, 720, P3D);
+  //fullScreen(P3D);
+  g3 = (PGraphics3D)g;
+  cam = new PeasyCam(this, 300);
   vertices = new PVector[total + 1][total + 1];
+  GUI = true;
+
+  controller = new ControlP5(this);
+
+  controller.addSlider("aM", 0, 10, 5, 20, 10, 10, 100); 
+  controller.addSlider("an1", 0, 2, 0.3, 50, 10, 10, 100); 
+  controller.addSlider("an2", 0, 2, 1.7, 80, 10, 10, 100); 
+  controller.addSlider("an3", 0, 2, 1.7, 110, 10, 10, 100); 
+
+  controller.addSlider("bM", 0, 10, 5, 20, 200, 10, 100); 
+  controller.addSlider("bn1", 0, 2, 0.3, 50, 200, 10, 100); 
+  controller.addSlider("bn2", 0, 2, 0.3, 80, 200, 10, 100); 
+  controller.addSlider("bn3", 0, 2, 0.3, 110, 200, 10, 100); 
+
+  controller.addSlider("r", 0, 200, 100, 20, 350, 100, 10);
+
+  controller.setAutoDraw(false);
+
+  TestShapeA = new Shape(aM, an1, an2, an3, 1.0, 1.0);
+  TestShapeB = new Shape(bM, bn1, bn2, bn3, 1.0, 1.0);
 }
 
 
 void draw() {
   background(0);
+  
+  TestShapeA.UpdateValues(aM, an1, an2, an3);
+  TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
+  
   lights();
-  CalculateVertices();
+  //CalculateVertices(new Shape(aM, an1, an2, an3, 1.0, 1.0), new Shape(bM, bn1, bn2, bn3, 1.0, 1.0));
+  //CalculateVertices(s1a, s1b);
+  CalculateVertices(TestShapeA, TestShapeB);
   noStroke();
-  fill(50, 200, 75);
+  fill(255);
   DrawShape();
+  gui();
 }
 
 
@@ -52,14 +105,14 @@ float supershape(float theta, Shape S) {
 }
 
 
-void CalculateVertices() {
+void CalculateVertices(Shape s1, Shape s2) {
   for (int i = 0; i < total+1; i++) {
     float lat = map(i, 0, total, -HALF_PI, HALF_PI);
-    float r2 = supershape(lat, s2b);
+    float r2 = supershape(lat, s2);
 
     for (int j = 0; j < total+1; j++) {
       float lon = map(j, 0, total, -PI, PI);
-      float r1 = supershape(lon, s2a);
+      float r1 = supershape(lon, s1);
 
       float x = r * r1 * cos(lon) * r2 * cos(lat);
       float y = r * r1 * sin(lon) * r2 *cos(lat);
@@ -82,4 +135,11 @@ void DrawShape() {
     }
     endShape();
   }
+}
+
+void gui() {
+  currCameraMatrix = new PMatrix3D(g3.camera);
+  camera();
+  controller.draw();
+  g3.camera = currCameraMatrix;
 }
