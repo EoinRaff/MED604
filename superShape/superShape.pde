@@ -17,9 +17,9 @@ PMatrix3D currCameraMatrix;
 PGraphics3D g3;
 
 boolean GUI;
+boolean DisplayArray;
 ControlP5 controller;
-color CL = #00FF1B;
-int ON_OF = 0;
+
 float aM = 1.0;
 float an1 = 1.0;
 float an2 = 1.0;
@@ -36,7 +36,9 @@ int total = 100;
 float r = 100;  
 
 Shape TestShapeA; 
-Shape TestShapeB; 
+Shape TestShapeB;
+Shape ShapeA; 
+Shape ShapeB; 
 
 Shape s0a = new Shape(0.0, 0.1, 1.7, 1.7, 1.0, 1.0);
 Shape s0b = new Shape(0.0, 0.2, 0.5, 0.5, 1.0, 1.0);
@@ -47,6 +49,9 @@ Shape s1b = new Shape(1.0, 0.2, 0.5, 0.5, 1.0, 1.0);
 Shape s2a = new Shape(5.2, 0.04, 1.7, 1.7, 1.0, 1.0);
 Shape s2b = new Shape(0.001, 1.0, 1.0, 1.0, 1.0, 1.0);
 
+ArrayList<Shape> ShapesA = new ArrayList<Shape>();
+ArrayList<Shape> ShapesB = new ArrayList<Shape>();
+int index = 0;
 
 void setup() {
   size(900, 720, P3D);
@@ -54,8 +59,9 @@ void setup() {
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 300);
   vertices = new PVector[total + 1][total + 1];
-  
+
   GUI = true;
+  DisplayArray= false;
 
   controller = new ControlP5(this);
 
@@ -77,21 +83,59 @@ void setup() {
   TestShapeB = new Shape(bM, bn1, bn2, bn3, 1.0, 1.0);
 }
 
+void keyPressed() {
+  switch(key) {
+  case 'g':
+    //toggle GUI visibility
+    GUI = !GUI;
+    DisplayArray = !DisplayArray;
+    break;
+  case 'a':
+    println("added shape to Array");
+    ShapesA.add(TestShapeA);
+    ShapesB.add(TestShapeB);
+    ShapeA = ShapesA.get(0);
+    ShapeB = ShapesB.get(0);
+    break;
+  case 'p':
+    println(ShapesA, ShapesB);
+    break;
+  case 'n':
+    //loop through array and change visible shape
+    println("next shape: " + index);
+    if(ShapesA.get(0) !=null){
+    ShapeA = ShapesA.get(index);
+    ShapeB = ShapesB.get(index);
+    index++;
+    if (index >= ShapesA.size()) {
+      index = 0;
+    }
+    break;
+  default:
+    break;
+  }
+}
 
 void draw() {
   background(0);
-  
+
   TestShapeA.UpdateValues(aM, an1, an2, an3);
   TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
-  
+
   lights();
   //CalculateVertices(new Shape(aM, an1, an2, an3, 1.0, 1.0), new Shape(bM, bn1, bn2, bn3, 1.0, 1.0));
   //CalculateVertices(s1a, s1b);
-  CalculateVertices(TestShapeA, TestShapeB);
+  if (DisplayArray) {
+    CalculateVertices(ShapeA, ShapeB);
+  } else {
+    CalculateVertices(TestShapeA, TestShapeB);
+  }
   noStroke();
   fill(255);
   DrawShape();
-  gui();
+  if (GUI) {
+    gui();
+  }
 }
 
 
