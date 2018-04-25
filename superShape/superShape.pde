@@ -49,6 +49,20 @@ Shape s1b = new Shape(1.0, 0.2, 0.5, 0.5, 1.0, 1.0);
 Shape s2a = new Shape(5.2, 0.04, 1.7, 1.7, 1.0, 1.0);
 Shape s2b = new Shape(0.001, 1.0, 1.0, 1.0, 1.0, 1.0);
 
+Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24, 0.0, 0.0);
+Shape flowerB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape star5A = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape star5b = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape spinningTopA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape spinningTopB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape xWingA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape xWingB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape speakerA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape speakerB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape lemonA = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+Shape lemonB = new Shape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+
 ArrayList<Shape> ShapesA = new ArrayList<Shape>();
 ArrayList<Shape> ShapesB = new ArrayList<Shape>();
 int index = 0;
@@ -103,10 +117,11 @@ void keyPressed() {
   case 'n':
     //loop through array and change visible shape
     println("next shape: " + index);
-    if(ShapesA.get(0) !=null){
-    ShapeA = ShapesA.get(index);
-    ShapeB = ShapesB.get(index);
-    index++;
+    if (ShapesA.get(0) !=null) {
+      ShapeA = ShapesA.get(index);
+      ShapeB = ShapesB.get(index);
+      index++;
+    }
     if (index >= ShapesA.size()) {
       index = 0;
     }

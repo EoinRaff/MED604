@@ -7,6 +7,14 @@ public class Shape {
     this.n3 = n3;
     this.a = a;
     this.b = b;
+  }  
+  public Shape(float m, float n1, float n2, float n3) {
+    this.m = m;
+    this.n1 = n1;
+    this.n2 = n2;
+    this.n3 = n3;
+    this.a = 1.0;
+    this.b = 1.0;
   }
   public void UpdateValues(float m, float n1, float n2, float n3)
   {
