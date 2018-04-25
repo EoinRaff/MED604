@@ -54,21 +54,22 @@ void setup() {
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 300);
   vertices = new PVector[total + 1][total + 1];
+  
   GUI = true;
 
   controller = new ControlP5(this);
 
-  controller.addSlider("aM", 0, 10, 5, 20, 10, 10, 100); 
+  controller.addSlider("aM", 0, 100, 5, 20, 10, 10, height-100); 
   controller.addSlider("an1", 0, 2, 0.3, 50, 10, 10, 100); 
-  controller.addSlider("an2", 0, 2, 1.7, 80, 10, 10, 100); 
-  controller.addSlider("an3", 0, 2, 1.7, 110, 10, 10, 100); 
+  controller.addSlider("an2", 0, 2, 0.3, 80, 10, 10, 100); 
+  controller.addSlider("an3", 0, 2, 0.3, 110, 10, 10, 100); 
 
-  controller.addSlider("bM", 0, 10, 5, 20, 200, 10, 100); 
-  controller.addSlider("bn1", 0, 2, 0.3, 50, 200, 10, 100); 
-  controller.addSlider("bn2", 0, 2, 0.3, 80, 200, 10, 100); 
-  controller.addSlider("bn3", 0, 2, 0.3, 110, 200, 10, 100); 
+  controller.addSlider("bM", 0, 100, 5, width-20, 10, 10, height-100); 
+  controller.addSlider("bn1", 0, 2, 1.0, width-50, 10, 10, 100); 
+  controller.addSlider("bn2", 0, 2, 1.0, width-80, 10, 10, 100); 
+  controller.addSlider("bn3", 0, 2, 1.0, width-110, 10, 10, 100); 
 
-  controller.addSlider("r", 0, 200, 100, 20, 350, 100, 10);
+  controller.addSlider("r", 0, 200, 100, 20, height-20, 500, 10);
 
   controller.setAutoDraw(false);
 
