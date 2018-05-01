@@ -4,11 +4,11 @@
  one for amplitude over time and one for frequency over time */
 
 class AudioProcessing { 
-  
+
   Minim         minim;
   AudioInput    in;
   FFT           fft;
- 
+
   FloatList amplitudes;       // Create a list of floats to store amplitudes
   FloatList frequencies;      // Create a list of floats to store frequencies 
 
@@ -24,12 +24,19 @@ class AudioProcessing {
   int time = millis();        // Count time between means
   int time_amp = millis();
 
+  int bufferSize = 300; //approx 5 seconds at 60 fps
+
   AudioProcessing() {         // Class constructor
     minim = new Minim(this);
     in = minim.getLineIn();
     fft = new FFT( in.bufferSize(), in.sampleRate() );
     amplitudes = new FloatList();
+
     frequencies = new FloatList();
+    for (int i = 0; i < bufferSize; i++) {
+      amplitudes.append(0.0);
+      frequencies.append(0.0);
+    }
   }
 
   float rtAmplitude() {
@@ -41,18 +48,18 @@ class AudioProcessing {
     sum += (((in.left.level()+in.right.level())/2) - sum) * smoothFactor;   // Smooth the data by smoothing factor - in.left/right.level returns the current amplitude in that channel
 
     amplitudes.append(sum);                         // Add the current amplitude to the list                       // Get the elapsed time
-
-    if (millis() > time_amp + timeBetween) {
-      meanamp = calcAverageAmp(amplitudes);            // Call the calcAverageAmp method to calculate the mean over the last X seconds
-      time_amp = millis();
-      amplitudes.clear();                           // Clear the list to only get mean over the latest 5 seconds
-    } 
+    amplitudes.remove(0);
+    //if (millis() > time_amp + timeBetween) {
+    meanamp = calcAverageAmp(amplitudes);            // Call the calcAverageAmp method to calculate the mean over the last X seconds
+    //time_amp = millis();
+    //amplitudes.clear();                           // Clear the list to only get mean over the latest 5 seconds
+    //} 
     return meanamp;
   }
 
   float rtFrequency() {
     fft.forward( in.mix );
-    
+
     for (int i = 0; i < fft.specSize(); i++) {
 
       if ( fft.getBand(i) > ampThreshold ) {
@@ -65,19 +72,21 @@ class AudioProcessing {
 
   float meanFrequency() {
     fft.forward( in.mix );
-    
+
     for (int i = 0; i < fft.specSize(); i++) {
 
       if ( fft.getBand(i) > ampThreshold ) {
         frequencies.append( int(fft.indexToFreq(i)) );
+        frequencies.remove(0);
       }
     }
+    meanfreq = calcAverageFreq(frequencies);
 
-    if (millis() > time + timeBetween) {
-      meanfreq = calcAverageFreq(frequencies);
-      time = millis();
-      frequencies.clear();
-    }
+    //if (millis() > time + timeBetween) {
+    //  meanfreq = calcAverageFreq(frequencies);
+    //  time = millis();
+    //  frequencies.clear();
+    //}
     return meanfreq;
   }
 
@@ -100,13 +109,11 @@ class AudioProcessing {
       }
       out = out/input.size();
       return out;
-    } 
-    else return meanfreq;
+    } else return meanfreq;
   }
-  
+
   void stop() {
-  in.close();
-  minim.stop();  
-}
-  
+    in.close();
+    minim.stop();
+  }
 }
