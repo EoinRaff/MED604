@@ -61,6 +61,8 @@ int index = 0;
 float hu = 0;
 float amp_m, frq_m, amp_rt, frq_rt;
 
+float angle = 0;
+
 void setup() {
   frameRate(60);
   size(900, 720, P3D);
@@ -97,10 +99,14 @@ void setup() {
 }
 
 void draw() {
+  angle = 0.001;
+  cam.rotateX(cos(angle)*0.001);
+  //cam.rotateY(cos(angle)*0.01);
+  cam.rotateZ(cos(angle)*0.001);
   UpdateAudioParameters();
 
   colorMode(HSB);
- 
+
   strokeWeight(2);
   stroke((hu*6)%255, 255, 255);
   noFill();
@@ -110,7 +116,7 @@ void draw() {
   B = 255;
   background(H, S, B);
 
-  total = int(map(amp_m, 0, 0.1, 20, 100));
+  total = int(map(amp_m, 0, 0.1, 10, 100));
 
   vertices = new PVector[total + 1][total + 1];
 
