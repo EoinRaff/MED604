@@ -32,7 +32,7 @@ float bn3 = 1.0;
 
 PeasyCam cam;
 PVector[][] vertices;
-int total = 100;
+int total = 10;
 float r = 100;  
 
 Shape TestShapeA; 
@@ -47,11 +47,13 @@ ArrayList<Shape> ShapesA = new ArrayList<Shape>();
 ArrayList<Shape> ShapesB = new ArrayList<Shape>();
 int index = 0;
 
+float hu = 0;
+
 void setup() {
   //size(900, 720, P3D);
   fullScreen(P3D);
   g3 = (PGraphics3D)g;
-  cam = new PeasyCam(this, 300);
+  cam = new PeasyCam(this, 100);
   vertices = new PVector[total + 1][total + 1];
 
   //GUI = true;
@@ -71,6 +73,7 @@ void setup() {
   controller.addSlider("bn3", 0, 2, 1.0, width-110, 10, 10, 100); 
 
   controller.addSlider("r", 0, 200, 100, 20, height-20, 500, 10);
+  controller.addSlider("total", 0, 100, 10, 20, height-70, 500, 10);
 
   controller.setAutoDraw(false);
 
@@ -162,6 +165,9 @@ void keyPressed() {
 void draw() {
   background(0);
 
+  vertices = new PVector[total + 1][total + 1];
+
+
   TestShapeA.UpdateValues(aM, an1, an2, an3);
   TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
 
@@ -171,16 +177,19 @@ void draw() {
   //if (DisplayArray) {
   //  CalculateVertices(ShapeA, ShapeB);
   //} else {
-  //  CalculateVertices(TestShapeA, TestShapeB);
+  CalculateVertices(TestShapeA, TestShapeB);
   //}
-  CalculateVertices(_shapes[index][0], _shapes[index][1]);
+  //CalculateVertices(_shapes[index][0], _shapes[index][1]);
   //noStroke();
-  stroke(200);
-  fill(255);
+  colorMode(HSB);
+  stroke((hu*6)%255, 255, 255);
+  //fill(255);
+  noFill();
   DrawShape();
   if (GUI) {
     gui();
   }
+  hu += 0.05;
 }
 
 
