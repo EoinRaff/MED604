@@ -65,8 +65,8 @@ float angle = 0;
 
 void setup() {
   frameRate(60);
-  size(900, 720, P3D);
-  //fullScreen(P3D);
+  //size(900, 720, P3D);
+  fullScreen(P3D);
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
   //vertices = new PVector[total + 1][total + 1];
@@ -99,8 +99,8 @@ void setup() {
 }
 
 void draw() {
-  angle = 0.001;
-  cam.rotateX(cos(angle)*0.001);
+  angle = 0.1;
+  cam.rotateX(cos(angle)*0.0005);
   //cam.rotateY(cos(angle)*0.01);
   cam.rotateZ(cos(angle)*0.001);
   UpdateAudioParameters();
@@ -108,7 +108,7 @@ void draw() {
   colorMode(HSB);
 
   strokeWeight(2);
-  stroke((hu*6)%255, 255, 255);
+  stroke((hu*6)%255, 0, 0);
   noFill();
   float H, S, B;
   H = map(frq_rt, 400, 7000, 0, 255);
