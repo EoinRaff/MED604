@@ -86,8 +86,8 @@ void setup() {
   controller.addSlider("bn2", 0, 2, 1.0, width-80, 10, 10, 100); 
   controller.addSlider("bn3", 0, 2, 1.0, width-110, 10, 10, 100); 
 
-  controller.addSlider("r", 0, 200, 100, 20, height-20, 500, 10);
-  controller.addSlider("total", 0, 100, 10, 20, height-70, 500, 10);
+  controller.addSlider("r", 0, 200, 200, 20, height-20, 500, 10);
+  controller.addSlider("total", 0, 100, 100, 20, height-70, 500, 10);
 
   controller.setAutoDraw(false);
 
@@ -196,7 +196,9 @@ void CalculateVertices(Shape s1, Shape s2) {
       float y = r * r1 * sin(lon) * r2 *cos(lat);
       float z = r * r2 * sin(lat);
 
-      vertices[i][j] = new PVector(x, y, z);
+      float offset = random(-50, 50)*amp_rt;
+      vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
+      
     }
   }
 }
