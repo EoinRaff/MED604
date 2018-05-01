@@ -1,3 +1,10 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 import controlP5.*;
 
 import peasy.*;
@@ -5,6 +12,8 @@ import peasy.org.apache.commons.math.*;
 import peasy.org.apache.commons.math.geometry.*;
 
 import processing.opengl.*;
+
+
 
 /*
 Based on Tutorials by Daniel Shiffman:
@@ -15,6 +24,8 @@ Based on Tutorials by Daniel Shiffman:
 
 PMatrix3D currCameraMatrix;
 PGraphics3D g3;
+
+AudioProcessing AP;
 
 boolean GUI;
 boolean DisplayArray;
@@ -48,6 +59,7 @@ ArrayList<Shape> ShapesB = new ArrayList<Shape>();
 int index = 0;
 
 float hu = 0;
+float amp_m, frq_m, amp_rt, frq_rt;
 
 void setup() {
   //size(900, 720, P3D);
@@ -55,6 +67,8 @@ void setup() {
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
   vertices = new PVector[total + 1][total + 1];
+  
+  AP = new AudioProcessing();
 
   //GUI = true;
   GUI = false;
@@ -80,47 +94,7 @@ void setup() {
   TestShapeA = new Shape(aM, an1, an2, an3, 1.0, 1.0);
   TestShapeB = new Shape(bM, bn1, bn2, bn3, 1.0, 1.0);
 
-  Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24);
-  Shape flowerB = new Shape(10.0, 2.0, 2.0, 2.0);
 
-  Shape star5A  = new Shape(4.89, 0.38, 1.12, 0.47);
-  Shape star5B  = new Shape(9.09, 0.71, 0.79, 1.12);
-
-  Shape spinningTopA  = new Shape(0.59, 2.0, 2.0, 2.0);
-  Shape spinningTopB  = new Shape(3.99, 0.58, 1.24, 0.96);
-
-  Shape xWingA  = new Shape(10.0, 0.5, 0.06, 0.53);
-  Shape xWingB  = new Shape(7.89, 1.69, 1.24, 0.96);
-
-  Shape speakerA  = new Shape(4.0, 0.3, 0.3, 0.3);
-  Shape speakerB  = new Shape(0.18, 1, 1, 0.5);
-
-  Shape lemonA  = new Shape(18.9, 1.0, 1.0, 0.5);
-  Shape lemonB  = new Shape(3.0, 0.3, 0.3, 0.85);
-
-  Shape AdamA = new Shape(3.99, 0.56, 0.59, 1.59);
-  Shape AdamB = new Shape(3.29, 1.31, 1.66, 0.96);
-
-  _shapes[0][0] = flowerA;
-  _shapes[0][1] = flowerB;
-
-  _shapes[1][0] = star5A;
-  _shapes[1][1] = star5B;
-
-  _shapes[2][0] = spinningTopA;
-  _shapes[2][1] = spinningTopB;
-
-  _shapes[3][0] = xWingA;
-  _shapes[3][1] = xWingB;
-
-  _shapes[4][0] = speakerA;
-  _shapes[4][1] = speakerB;
-
-  _shapes[5][0] = lemonA;
-  _shapes[5][1] = lemonB;
-
-  _shapes[6][0] = AdamA;
-  _shapes[6][1] = AdamB;
 }
 
 void keyPressed() {
@@ -166,6 +140,11 @@ void draw() {
   background(0);
 
   vertices = new PVector[total + 1][total + 1];
+  
+  amp_m = AP.meanAmplitude();
+  amp_rt = AP.rtAmplitude();
+  frq_m = AP.meanFrequency();
+  frq_rt = AP.rtFrequency();
 
 
   TestShapeA.UpdateValues(aM, an1, an2, an3);
@@ -242,3 +221,44 @@ void gui() {
   controller.draw();
   g3.camera = currCameraMatrix;
 }
+  //Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24);
+  //Shape flowerB = new Shape(10.0, 2.0, 2.0, 2.0);
+
+  //Shape star5A  = new Shape(4.89, 0.38, 1.12, 0.47);
+  //Shape star5B  = new Shape(9.09, 0.71, 0.79, 1.12);
+
+  //Shape spinningTopA  = new Shape(0.59, 2.0, 2.0, 2.0);
+  //Shape spinningTopB  = new Shape(3.99, 0.58, 1.24, 0.96);
+
+  //Shape xWingA  = new Shape(10.0, 0.5, 0.06, 0.53);
+  //Shape xWingB  = new Shape(7.89, 1.69, 1.24, 0.96);
+
+  //Shape speakerA  = new Shape(4.0, 0.3, 0.3, 0.3);
+  //Shape speakerB  = new Shape(0.18, 1, 1, 0.5);
+
+  //Shape lemonA  = new Shape(18.9, 1.0, 1.0, 0.5);
+  //Shape lemonB  = new Shape(3.0, 0.3, 0.3, 0.85);
+
+  //Shape AdamA = new Shape(3.99, 0.56, 0.59, 1.59);
+  //Shape AdamB = new Shape(3.29, 1.31, 1.66, 0.96);
+
+  //_shapes[0][0] = flowerA;
+  //_shapes[0][1] = flowerB;
+
+  //_shapes[1][0] = star5A;
+  //_shapes[1][1] = star5B;
+
+  //_shapes[2][0] = spinningTopA;
+  //_shapes[2][1] = spinningTopB;
+
+  //_shapes[3][0] = xWingA;
+  //_shapes[3][1] = xWingB;
+
+  //_shapes[4][0] = speakerA;
+  //_shapes[4][1] = speakerB;
+
+  //_shapes[5][0] = lemonA;
+  //_shapes[5][1] = lemonB;
+
+  //_shapes[6][0] = AdamA;
+  //_shapes[6][1] = AdamB;
