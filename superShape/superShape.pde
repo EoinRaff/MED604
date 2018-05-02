@@ -88,7 +88,7 @@ void draw() {
 
   colorMode(HSB);
   strokeWeight(2);
-  stroke(col_m, 255, 255);
+  stroke((hu*10)%255, 255, 255);
   noFill();
   DrawShape(v);
 

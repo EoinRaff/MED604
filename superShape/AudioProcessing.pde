@@ -10,14 +10,15 @@ class AudioProcessing {
   FFT           fft;
 
   FloatList amplitudes;       // Create a list of floats to store amplitudes
-  FloatList frequencies;      // Create a list of floats to store frequencies 
+  FloatList frequencies;      // Create a list of floats to store frequencies
+  FloatList freq_over_time;
 
   float scale = 5.0;          // Declare a scaling factor
   float smoothFactor = 0.25;  // Declare a smooth factor
   float sum;                  // Used for smoothing
   float meanamp;              // Deifne the mean variable of amplitude
   float meanfreq;             // Define the mean variable of frequency
-  float ampThreshold = 0.3;
+  float ampThreshold = 0.7;
 
   int counter = 1;            // Used to keep count and restart the sampling of amplitudes
   int timeBetween = 5000;     // Decide the time between means
@@ -33,9 +34,11 @@ class AudioProcessing {
     amplitudes = new FloatList();
 
     frequencies = new FloatList();
+    freq_over_time = new FloatList();
     for (int i = 0; i < bufferSize; i++) {
       amplitudes.append(0.0);
       frequencies.append(0.0);
+      freq_over_time.append(0.0);
     }
   }
 
@@ -61,13 +64,13 @@ class AudioProcessing {
     fft.forward( in.mix );
 
     for (int i = 0; i < fft.specSize(); i++) {
-
       if ( fft.getBand(i) > ampThreshold ) {
         frequencies.append( int(fft.indexToFreq(i)) );
+        frequencies.remove(0);
       }
     }
-    meanfreq = calcAverageFreq(frequencies);
-    return meanfreq;
+    return calcAverageFreq(frequencies);
+    //return meanfreqrt;
   }
 
   float meanFrequency() {
@@ -80,14 +83,10 @@ class AudioProcessing {
         frequencies.remove(0);
       }
     }
-    meanfreq = calcAverageFreq(frequencies);
+    freq_over_time.remove(0);
+    freq_over_time.append(calcAverageFreq(frequencies));
 
-    //if (millis() > time + timeBetween) {
-    //  meanfreq = calcAverageFreq(frequencies);
-    //  time = millis();
-    //  frequencies.clear();
-    //}
-    return meanfreq;
+    return calcAverageFreq(freq_over_time);
   }
 
   float calcAverageAmp(FloatList input) {        // Method to calculate the mean of the last 5 seconds of amplitudes
