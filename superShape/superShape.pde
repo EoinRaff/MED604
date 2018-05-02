@@ -1,26 +1,10 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
-import ddf.minim.effects.*;
-import ddf.minim.signals.*;
-import ddf.minim.spi.*;
-import ddf.minim.ugens.*;
 
 import controlP5.*;
 
 import peasy.*;
-import peasy.org.apache.commons.math.*;
-import peasy.org.apache.commons.math.geometry.*;
 
-import processing.opengl.*;
-
-
-
-/*
-Based on Tutorials by Daniel Shiffman:
- 
- Part 1: https://www.youtube.com/watch?v=RkuBWEkBrZA
- Part 2:   https://www.youtube.com/watch?v=akM4wMZIBWg
- */
 
 PMatrix3D currCameraMatrix;
 PGraphics3D g3;
@@ -41,20 +25,12 @@ float bn2 = 1.0;
 float bn3 = 1.0;
 
 PeasyCam cam;
-PVector[][] vertices;
-int total;// = 10;
+int total;
 float r = 200;  
 
 Shape TestShapeA; 
 Shape TestShapeB;
 
-Shape ShapeA; 
-Shape ShapeB; 
-
-Shape[][] _shapes = new Shape[7][2];
-
-ArrayList<Shape> ShapesA = new ArrayList<Shape>();
-ArrayList<Shape> ShapesB = new ArrayList<Shape>();
 int index = 0;
 
 float hu = 0;
@@ -64,12 +40,13 @@ float angle = 0;
 
 void setup() {
   frameRate(60);
+  
   //size(900, 720, P3D);
   fullScreen(P3D);
+
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
-  //vertices = new PVector[total + 1][total + 1];
-
+  
   AP = new AudioProcessing();
 
   InitializeGUI();
@@ -98,26 +75,39 @@ void draw() {
 
   total = int(map(amp_m, 0, 1, 10, 100));
 
-  vertices = new PVector[total + 1][total + 1];
-
-  //Update Values is needed to make a reactive SuperShape
-  //i.e. one which will change based on M, n1, n2, n3 values.
-  //These could be manipulated via GUI or AP
-  TestShapeA.UpdateValues(aM, an1, an2, an3);
-  TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
 
   DrawShape(CalculateVertices(TestShapeA, TestShapeB));
 
   if (GUI) {
+    //Update Values is needed to make a reactive SuperShape
+    //i.e. one which will change based on M, n1, n2, n3 values.
+    //These could be manipulated via GUI or AP
+    TestShapeA.UpdateValues(aM, an1, an2, an3);
+    TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
+
     gui();
   }
 }
+
+
+void keyPressed() {
+  switch(key) {
+  case 'g':
+    GUI = !GUI;
+    break;
+  default:
+    break;
+  }
+}
+
+
 void UpdateAudioParameters() {
   amp_m = AP.meanAmplitude();
   amp_rt = AP.rtAmplitude();
   frq_m = AP.meanFrequency();
   frq_rt = AP.rtFrequency();
 }
+
 
 float supershape(float theta, Shape S) {
   float t1 = abs((1/S.a) * cos(S.m *theta / 4));
@@ -131,7 +121,11 @@ float supershape(float theta, Shape S) {
 
 
 PVector[][] CalculateVertices(Shape s1, Shape s2) {
+  
+  PVector[][] vertices = new PVector[total + 1][total + 1];
+
   for (int i = 0; i < total+1; i++) {
+
     float lat = map(i, 0, total, -HALF_PI, HALF_PI);
     float r2 = supershape(lat, s2);
 
@@ -170,43 +164,7 @@ void gui() {
   controller.draw();
   g3.camera = currCameraMatrix;
 }
-void keyPressed() {
-  switch(key) {
-  case 'g':
-    //toggle GUI visibility
-    GUI = !GUI;
-    break;
-  case 'a':
-    println("added shape to Array");
-    ShapesA.add(TestShapeA);
-    ShapesB.add(TestShapeB);
-    ShapeA = ShapesA.get(0);
-    ShapeB = ShapesB.get(0);
-    break;
-  case 'p':
-    println(ShapesA, ShapesB);
-    break;
-  case 'n':
-    //loop through array and change visible shape
-    //if (ShapesA.get(0) !=null) {
-    //  ShapeA = ShapesA.get(index);
-    //  ShapeB = ShapesB.get(index);
-    //  index++;
-    //}
-    //if (index >= ShapesA.size()) {
-    //  index = 0;
-    //}
-    index++;
-    if (index >= _shapes.length) {
-      index = 0;
-    }
-    println("next shape: " + index);
 
-    break;
-  default:
-    break;
-  }
-}
 
 void InitializeGUI() {
   GUI = false;
@@ -222,6 +180,8 @@ void InitializeGUI() {
   controller.addSlider("r", 0, 200, 200, 20, height-20, 500, 10);
   controller.setAutoDraw(false);
 }
+
+
 void MoveCamera() {
   angle = 0.1;
   cam.rotateX(cos(angle)*0.0005);
