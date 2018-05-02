@@ -77,10 +77,10 @@ void draw() {
 
   float col_rt = map(frq_rt, 300, 7000, 0, 255);
   float col_m = map(frq_m, 300, 7000, 0, 255);
-  float update_m = map(frq_m, 200, 8000, 0, 0.1);
+  float update_m = map(frq_m, 200, 8000, 0.05, 0.5);
   //console.clear();
-  println("RT: " + frq_rt + "log: " + log(frq_rt) + "Col: " + col_rt);
-  println("M: " + frq_m + "log: " + log(frq_m) + "Col: " + col_m);
+  //println("RT: " + frq_rt + " log: " + log(frq_rt) + " Col: " + col_rt);
+  //println("M: " + frq_m + " log: " + log(frq_m) + " Col: " + col_m);
 
 
   colorMode(RGB);
@@ -90,8 +90,13 @@ void draw() {
 
   colorMode(HSB);
   strokeWeight(2);
+  stroke(col_m);
+  fill(255-col_m);
+
   stroke(hu%255, 255, 255);
-  noFill();
+  fill(255-(hu%255), 255, col_m);
+//  noFill();
+
   DrawShape(v);
 
   colorMode(RGB);
@@ -101,8 +106,8 @@ void draw() {
   rotateX(-rot);
   rotateY(-rot*0.5);
   rotateZ(rot*2);
-  stroke(255 - col_rt);
   strokeWeight(5);
+  stroke(255 - col_rt);
   fill(col_rt);
   //fill(20);
   total = 50;
@@ -178,7 +183,6 @@ PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
       if (RT) {
         offset = random(-100, 100)*amp_rt;
       }
-      hu = map (j, 0, total, 0, 255*6);
       vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
     }
   }
