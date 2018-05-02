@@ -28,65 +28,99 @@ PeasyCam cam;
 int total;
 float r = 200;  
 
-Shape TestShapeA; 
-Shape TestShapeB;
+Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB, spinningTopA, spinningTopB;
 
 int index = 0;
 
 float hu = 0;
+float rot = 0;
 float amp_m, frq_m, amp_rt, frq_rt;
-
-float angle = 0;
+float minAmp, maxAmp;
+float calibrationAmp = 0.20; //this value needs to be calibrated for each environment
+//In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
 
 void setup() {
   frameRate(60);
-  
+
   //size(900, 720, P3D);
   fullScreen(P3D);
 
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
-  
+
   AP = new AudioProcessing();
 
-  InitializeGUI();
-
+  //InitializeGUI();
+  // Create Shapes
   TestShapeA = new Shape(aM, an1, an2, an3, 1.0, 1.0);
   TestShapeB = new Shape(bM, bn1, bn2, bn3, 1.0, 1.0);
+
+  OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
+  OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
+
+  InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
+  InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
+
+  spinningTopA  = new Shape(0.59, 2.0, 2.0, 2.0);
+  spinningTopB  = new Shape(3.99, 0.58, 1.24, 0.96);
+
+  minAmp = 999999;
+  maxAmp = 0;
 }
 
 void draw() {
   MoveCamera();
-
   UpdateAudioParameters();
 
+  //CalibrateAmplitude();
+
+  float col_rt = map(frq_rt, 0, 10, 0, 255);
+  float col_m = map(frq_m, 400, 10000, 0, 255);
+  //console.clear();
+  println("RT: " + frq_rt + "log: " + log(frq_rt) + "Col: " + col_rt);
+  println("M: " + frq_m + "log: " + log(frq_m) + "Col: " + col_m);
+
+
+  colorMode(RGB);
+  background(0);
+  total = int(map(amp_m, 0, calibrationAmp, 10, 100));
+  PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
+
   colorMode(HSB);
-
   strokeWeight(2);
-  stroke((hu*6)%255, 255, 255);
+  stroke(col_m, 255, 255);
   noFill();
-  float H, S, B;
-  H = map(frq_rt, 400, 7000, 0, 255);
-  S = map(frq_m, 400, 7000, 0, 255);
-  B = 255;
-  background(H, 255, B);
+  DrawShape(v);
 
-  hu += 0.1;
+  colorMode(RGB);
+  pushMatrix();
+  scale(0.2);
+  translate(0, 0, -250);
+  rotateX(-rot);
+  rotateY(-rot*0.5);
+  rotateZ(rot*2);
+  stroke(255);
+  strokeWeight(5);
+  //fill(col_rt);
+  fill(20);
+  total = 50;
+  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  popMatrix();
 
-  total = int(map(amp_m, 0, 1, 10, 100));
-
-
-  DrawShape(CalculateVertices(TestShapeA, TestShapeB));
 
   if (GUI) {
     //Update Values is needed to make a reactive SuperShape
     //i.e. one which will change based on M, n1, n2, n3 values.
     //These could be manipulated via GUI or AP
-    TestShapeA.UpdateValues(aM, an1, an2, an3);
-    TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
+
+    //TestShapeA.UpdateValues(aM, an1, an2, an3);
+    //TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
 
     gui();
   }
+
+  rot += 0.001;
+  hu += 0.1;
 }
 
 
@@ -120,8 +154,8 @@ float supershape(float theta, Shape S) {
 }
 
 
-PVector[][] CalculateVertices(Shape s1, Shape s2) {
-  
+PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
+
   PVector[][] vertices = new PVector[total + 1][total + 1];
 
   for (int i = 0; i < total+1; i++) {
@@ -137,7 +171,10 @@ PVector[][] CalculateVertices(Shape s1, Shape s2) {
       float y = r * r1 * sin(lon) * r2 *cos(lat);
       float z = r * r2 * sin(lat);
 
-      float offset = random(-50, 50)*amp_rt;
+      float offset = 0;
+      if (RT) {
+        offset = random(-100, 100)*amp_rt;
+      }
       vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
     }
   }
@@ -183,8 +220,19 @@ void InitializeGUI() {
 
 
 void MoveCamera() {
-  angle = 0.1;
+  float angle = 10;
   cam.rotateX(cos(angle)*0.0005);
   //cam.rotateY(cos(angle)*0.01);
   cam.rotateZ(cos(angle)*0.001);
+}
+
+
+void CalibrateAmplitude() {
+  if (amp_rt > maxAmp) {
+    maxAmp = amp_rt;
+  }
+  if (amp_rt < minAmp) {
+    minAmp = amp_rt;
+  }
+  println("Max : " + maxAmp + ", Min: " + minAmp);
 }

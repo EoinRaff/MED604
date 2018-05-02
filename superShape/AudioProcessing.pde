@@ -24,7 +24,7 @@ class AudioProcessing {
   int time = millis();        // Count time between means
   int time_amp = millis();
 
-  int bufferSize = 300; //approx 5 seconds at 60 fps
+  int bufferSize = 420; //approx 7 seconds at 60 fps
 
   AudioProcessing() {         // Class constructor
     minim = new Minim(this);
