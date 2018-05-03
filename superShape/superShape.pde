@@ -133,7 +133,7 @@ void draw() {
   rot += 0.001;
   hu += update_m;
   if (recordData)
-    data.println(millis()+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+total+","+frameRate+";");
+    data.println(millis()+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate+";");
 }
 
 
