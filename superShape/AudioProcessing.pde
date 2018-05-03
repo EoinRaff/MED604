@@ -36,9 +36,9 @@ class AudioProcessing {
     frequencies = new FloatList();
     freq_over_time = new FloatList();
     for (int i = 0; i < bufferSize; i++) {
-      amplitudes.append(0.0);
-      frequencies.append(0.0);
-      freq_over_time.append(0.0);
+      amplitudes.append(random(0, 1));
+      frequencies.append(random(0, 1));
+      freq_over_time.append(random(0, 1));
     }
   }
 
