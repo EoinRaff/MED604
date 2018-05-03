@@ -11,7 +11,12 @@ void setup()  {
 }    
 
 void draw()  {
+  background(255);
   float fre = mySound.meanFrequency();
   float amp = mySound.meanAmplitude();
-  println("Amp: " + amp + " Freq: " + fre );
+  float frert = mySound.rtFrequency();
+  println("Amp: " + amp + " Freq: " + fre + " Frequency real time " + frert);
+  fill(0);
+  text("Frequency Real time " + frert, 10, 20);
+  text("Frequency mean " + fre, 10, 40);
 }

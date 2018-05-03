@@ -17,7 +17,6 @@ class AudioProcessing {
   float sum;                  // Used for smoothing
   float meanamp;              // Deifne the mean variable of amplitude
   float meanfreq;             // Define the mean variable of frequency
-  float meanfreqrt;
   float ampThreshold = 0.3;
 
   int counter = 1;            // Used to keep count and restart the sampling of amplitudes
@@ -60,8 +59,8 @@ class AudioProcessing {
         frequencies.append( int(fft.indexToFreq(i)) );
       }
     }
-    meanfreqrt = calcAverageFreq(frequencies);
-    return meanfreqrt;
+    meanfreq = calcAverageFreq(frequencies);
+    return meanfreq;
   }
 
   float meanFrequency() {
