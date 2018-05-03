@@ -12,6 +12,7 @@ PGraphics3D g3;
 AudioProcessing AP;
 
 boolean GUI;
+boolean recordData;
 ControlP5 controller;
 
 float aM = 1.0;
@@ -43,7 +44,7 @@ float calibrationAmp = 0.20; //this value needs to be calibrated for each enviro
 void setup() {
   frameRate(60);
   data = createWriter("data.txt");
-  data.println("frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate");
+  data.println("elapsedTime,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
 
   //size(900, 720, P3D);
   //size(96, 52, P3D);
@@ -72,6 +73,8 @@ void setup() {
   maxAmp = 0;
   minFrq = 999999;
   maxFrq = 0;
+
+  recordData = false;
 }
 
 void draw() {
@@ -96,7 +99,7 @@ void draw() {
 
   stroke(hu%255, 255, 255);
   fill(255-(hu%255), 255, col_m);
-  
+
   DrawShape(v);
 
   colorMode(RGB);
@@ -107,7 +110,7 @@ void draw() {
   rotateY(-rot*0.5);
   rotateZ(rot*2);
   strokeWeight(5);
-  
+
   stroke(255 - col_rt);
   fill(col_rt);
 
@@ -129,8 +132,8 @@ void draw() {
 
   rot += 0.001;
   hu += update_m;
-  
-  data.println(frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+total+","+frameRate);
+  if (recordData)
+    data.println(millis()+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+total+","+frameRate+";");
 }
 
 
@@ -142,6 +145,9 @@ void keyPressed() {
   case 'p':
     data.flush();
     data.close();
+  case 'r':
+    recordData = true;
+    break;
   default:
     break;
   }
@@ -243,18 +249,18 @@ void CalibrateValues() {
   if (amp_rt > maxAmp) {
     maxAmp = amp_rt;
   }
-  
+
   if (amp_rt < minAmp) {
     minAmp = amp_rt;
   }
-  
-  if(frq_rt > maxFrq){
+
+  if (frq_rt > maxFrq) {
     maxFrq = frq_rt;
   }
-  
-  if(frq_rt < minFrq){
+
+  if (frq_rt < minFrq) {
     minFrq = frq_rt;
   }
-  
+
   //println("Max : " + maxAmp + ", Min: " + minAmp);
 }
