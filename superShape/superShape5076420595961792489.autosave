@@ -43,7 +43,7 @@ float bn3 = 1.0;
 
 PeasyCam cam;
 PVector[][] vertices;
-int total;// = 10;
+int total = 10;
 float r = 200;  
 
 Shape TestShapeA; 
@@ -61,12 +61,10 @@ int index = 0;
 float hu = 0;
 float amp_m, frq_m, amp_rt, frq_rt;
 
-float angle = 0;
-
 void setup() {
   frameRate(60);
-  //size(900, 720, P3D);
-  fullScreen(P3D);
+  size(900, 720, P3D);
+  //fullScreen(P3D);
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
   //vertices = new PVector[total + 1][total + 1];
@@ -99,24 +97,25 @@ void setup() {
 }
 
 void draw() {
-  angle = 0.1;
-  cam.rotateX(cos(angle)*0.0005);
-  //cam.rotateY(cos(angle)*0.01);
-  cam.rotateZ(cos(angle)*0.001);
   UpdateAudioParameters();
+  //println("RT: " + frq_rt + ", M: " + frq_m);
 
   colorMode(HSB);
-
+  hu = map(frq_m, 20, 7000, 0, 255);
   strokeWeight(2);
-  stroke((hu*6)%255, 0, 0);
+  stroke((hu*6)%255, 255, 255);
   noFill();
-  float H, S, B;
-  H = map(frq_rt, 400, 7000, 0, 255);
-  S = map(frq_m, 400, 7000, 0, 255);
-  B = 255;
-  background(H, S, B);
+  float bg;
+  bg = map(frq_rt, 400, 7000, 0, 255);
+  colorMode(RGB);
+  background(bg);
 
-  total = int(map(amp_m, 0, 0.1, 10, 100));
+  total = int(map(amp_m, 0, 1, 0.001, 0.01));
+  //if(total >= 100 || total <= 10)
+  //  change *= -1;
+  //total += change;
+  //println(total + "ch: " + change);
+  
 
   vertices = new PVector[total + 1][total + 1];
 
@@ -128,7 +127,7 @@ void draw() {
   if (GUI) {
     gui();
   }
-  hu += 0.1;
+  //hu += 0.1;
 }
 void UpdateAudioParameters() {
   amp_m = AP.meanAmplitude();
