@@ -139,9 +139,6 @@ void keyPressed() {
   case 'g':
     GUI = !GUI;
     break;
-  case 'p':
-    data.flush();
-    data.close();
   default:
     break;
   }
