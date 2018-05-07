@@ -1,10 +1,11 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
+import ddf.minim.spi.*;
 import controlP5.*;
 import peasy.*;
 
 static int participantNumber = 0;
-char condition = ' ';
+char condition = 'A';
 PrintWriter data;
 String filename;
 
@@ -13,7 +14,8 @@ PGraphics3D g3;
 
 Minim minim;
 AudioProcessing AP;
-AudioPlayer player;
+//ConditionB conditionB;
+AudioPlayer player, playerA, playerB;
 
 boolean GUI;
 boolean recordData;
@@ -38,7 +40,7 @@ Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB
 
 int index = 0;
 int eventRecognized = 0;
-
+float noiseIndex = 0;
 float hu = 0;
 float rot = 0;
 float amp_m, frq_m, amp_rt, frq_rt;
@@ -47,16 +49,20 @@ float calibrationAmp = 0.20; //this value needs to be calibrated for each enviro
 //In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
 
 void setup() {
+  noiseSeed(0);
   frameRate(60);
-  //size(900, 720, P3D);
+  size(900, 720, P3D);
   //size(96, 52, P3D);
-  fullScreen(P3D);
+  //fullScreen(P3D);
 
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
 
-  AP = new AudioProcessing();
   minim = new Minim(this);
+  AP = new AudioProcessing();
+  player = minim.loadFile("Audio/test.wav");
+  playerA = minim.loadFile("Audio/soundscape_A.wav");
+  playerB = minim.loadFile("Audio/soundscape_B.wav");
 
   InitializeGUI();
   // Create Shapes
@@ -134,12 +140,22 @@ void draw() {
   }
 
   rot += 0.001;
+  noiseIndex += 0.01;
   hu += update_m;
 
   if (recordData)
     data.println(millis()+","+eventRecognized+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
 
   eventRecognized = 0;
+  if(player != null){
+    if(!player.isPlaying() && recordData){
+      println("Audio File ended");
+      EndTest();
+    }
+  }else {
+    println("no working player");
+  }
+  //println(amp_m, amp_rt, frq_m, frq_rt);
 }
 
 
@@ -180,20 +196,26 @@ void StartTest(char _condition) {
   recordData = true;
   String currentTime = "date_" + day()+ "_" +month()+ "_time_" + hour()+ "_" + minute();
   if (condition == 'A') {
-    //start Test with Condition A - Reactive
-    //start Audio File
     //TODO: check if desired file is already loaded
-    player = minim.loadFile("Audio/soundscape_A.wav");
+    println("loading file");
+    player = playerA;
+    println("file loaded");
+    filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
     //TODO:check if this loops by default or not
   } else if (condition == 'B') {
-    //start Test with Condition B - Non-Reactive
-    //startAudioFile
-    player = minim.loadFile("Audio/soundscape_B.wav");
+    noiseIndex = 0;
+    player = playerB;
+    filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
+  } else if (condition == ' ') {
+    //println("Calibrating");
+    //maybe replace with calibration file
+    player = minim.loadFile("Audio/soundscape_A.wav");
+    //filename=("calibrataion_data.txt");
   } else {
     //error
   }
   println("Participant Number " + participantNumber + ", Condition " + condition);
-  filename = "paticipant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
+  filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
   data = createWriter("Data/"+filename);
   data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
   println("Playing AudioFile");
@@ -202,7 +224,7 @@ void StartTest(char _condition) {
 }
 
 void EndTest() { 
-  if(player.isPlaying()){
+  if (player.isPlaying()) {
     player.pause();
     player.rewind();
   }
@@ -215,7 +237,7 @@ void EndTest() {
 }
 
 void UpdateAudioParameters(char _condition) {
-  if (_condition == 'A') {
+  if (_condition == 'A' || _condition == ' ') {
     //Reactive to Mic Input
     amp_m = AP.meanAmplitude();
     amp_rt = AP.rtAmplitude();
@@ -223,13 +245,10 @@ void UpdateAudioParameters(char _condition) {
     frq_rt = AP.rtFrequency();
   } else if (_condition =='B') {
     //reactive to AudioFile data
-
-    //amp_m = AP.meanAmplitude();
-    //amp_rt = AP.rtAmplitude();
-    //frq_m = AP.meanFrequency();
-    //frq_rt = AP.rtFrequency();
-  } else if (_condition == ' ') {
-    //not initialized
+    amp_m = noise(noiseIndex)*0.01;
+    amp_rt = noise(noiseIndex)*0.01;
+    frq_m = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
+    frq_rt = noise(noiseIndex);
   } else {
     //error
   }
