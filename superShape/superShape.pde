@@ -13,7 +13,7 @@ PGraphics3D g3;
 
 Minim minim;
 AudioProcessing AP;
-AudioPlayer playerA, playerB;
+AudioPlayer player;
 
 boolean GUI;
 boolean recordData;
@@ -56,8 +56,8 @@ void setup() {
   cam = new PeasyCam(this, 100);
 
   AP = new AudioProcessing();
-  playerA = minim.loadFile("Audio/soundscape_A.wav");
-  playerB = minim.loadFile("Audio/soundscape_B.wav");
+  minim = new Minim(this);
+
   InitializeGUI();
   // Create Shapes
   TestShapeA = new Shape(aM, an1, an2, an3, 1.0, 1.0);
@@ -182,21 +182,30 @@ void StartTest(char _condition) {
   if (condition == 'A') {
     //start Test with Condition A - Reactive
     //start Audio File
+    //TODO: check if desired file is already loaded
+    player = minim.loadFile("Audio/soundscape_A.wav");
+    //TODO:check if this loops by default or not
   } else if (condition == 'B') {
     //start Test with Condition B - Non-Reactive
     //startAudioFile
+    player = minim.loadFile("Audio/soundscape_B.wav");
   } else {
     //error
   }
   println("Participant Number " + participantNumber + ", Condition " + condition);
   filename = "paticipant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
-  data = createWriter(filename);
+  data = createWriter("Data/"+filename);
   data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
-
+  println("Playing AudioFile");
+  player.play();
   //logging of data occurs every frame in Draw()
 }
 
 void EndTest() { 
+  if(player.isPlaying()){
+    player.pause();
+    player.rewind();
+  }
   println("Saving Data to file: " + filename);
   data.flush();
   data.close();  
@@ -300,7 +309,6 @@ void InitializeGUI() {
 void MoveCamera() {
   float angle = 10;
   cam.rotateX(cos(angle)*0.0005);
-  //cam.rotateY(cos(angle)*0.01);
   cam.rotateZ(cos(angle)*0.001);
 }
 
@@ -309,18 +317,13 @@ void CalibrateValues() {
   if (amp_rt > maxAmp) {
     maxAmp = amp_rt;
   }
-
   if (amp_rt < minAmp) {
     minAmp = amp_rt;
   }
-
   if (frq_rt > maxFrq) {
     maxFrq = frq_rt;
   }
-
   if (frq_rt < minFrq) {
     minFrq = frq_rt;
   }
-
-  //println("Max : " + maxAmp + ", Min: " + minAmp);
 }
