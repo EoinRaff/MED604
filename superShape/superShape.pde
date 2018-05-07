@@ -33,6 +33,7 @@ float r = 200;
 Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB, spinningTopA, spinningTopB;
 
 int index = 0;
+int eventRecognized = 0;
 
 float hu = 0;
 float rot = 0;
@@ -44,7 +45,7 @@ float calibrationAmp = 0.20; //this value needs to be calibrated for each enviro
 void setup() {
   frameRate(60);
   data = createWriter("data.txt");
-  data.println("elapsedTime,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
+  data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
 
   //size(900, 720, P3D);
   //size(96, 52, P3D);
@@ -132,8 +133,11 @@ void draw() {
 
   rot += 0.001;
   hu += update_m;
+
   if (recordData)
-    data.println(millis()+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate+";");
+    data.println(millis()+","+eventRecognized+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
+
+  eventRecognized = 0;
 }
 
 
@@ -142,11 +146,13 @@ void keyPressed() {
   case 'g':
     GUI = !GUI;
     break;
-  case 'p':
-    data.flush();
+  case 'p': 
     data.close();
   case 'r':
     recordData = true;
+    break;
+  case ' ':
+    eventRecognized = 1; 
     break;
   default:
     break;
