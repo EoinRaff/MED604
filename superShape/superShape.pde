@@ -1,8 +1,6 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
-
 import controlP5.*;
-
 import peasy.*;
 
 static int participantNumber = 0;
@@ -13,7 +11,9 @@ String filename;
 PMatrix3D currCameraMatrix;
 PGraphics3D g3;
 
+Minim minim;
 AudioProcessing AP;
+AudioPlayer playerA, playerB;
 
 boolean GUI;
 boolean recordData;
@@ -56,7 +56,8 @@ void setup() {
   cam = new PeasyCam(this, 100);
 
   AP = new AudioProcessing();
-
+  playerA = minim.loadFile("Audio/soundscape_A.wav");
+  playerB = minim.loadFile("Audio/soundscape_B.wav");
   InitializeGUI();
   // Create Shapes
   TestShapeA = new Shape(aM, an1, an2, an3, 1.0, 1.0);
@@ -175,7 +176,6 @@ void keyPressed() {
 
 
 void StartTest(char _condition) {
-  //get Participant Number
   condition = _condition;
   recordData = true;
   String currentTime = "date_" + day()+ "_" +month()+ "_time_" + hour()+ "_" + minute();
