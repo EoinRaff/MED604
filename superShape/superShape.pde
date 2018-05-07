@@ -5,6 +5,8 @@ import controlP5.*;
 
 import peasy.*;
 
+static int participantNumber = 0;
+
 PrintWriter data;
 PMatrix3D currCameraMatrix;
 PGraphics3D g3;
@@ -44,9 +46,6 @@ float calibrationAmp = 0.20; //this value needs to be calibrated for each enviro
 
 void setup() {
   frameRate(60);
-  data = createWriter("data.txt");
-  data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
-
   //size(900, 720, P3D);
   //size(96, 52, P3D);
   fullScreen(P3D);
@@ -143,13 +142,22 @@ void draw() {
 
 void keyPressed() {
   switch(key) {
+  case 'a':
+    StartTest('A');
+    break;
+  case 'b':
+    StartTest('B');
+    break;
+  case 'e':
+    EndTest();
+    break;
   case 'g':
     GUI = !GUI;
     break;
   case 'p': 
     data.close();
   case 'r':
-    recordData = true;
+    //recordData = true;
     break;
   case ' ':
     eventRecognized = 1; 
@@ -159,6 +167,32 @@ void keyPressed() {
   }
 }
 
+
+void StartTest(char condition) {
+  //get Participant Number
+  recordData = true;
+  String currentTime = day()+ "_" + hour()+ "_" + minute();
+  if (condition == 'A') {
+    //start Test with Condition A - Reactive
+    //start Audio File
+  } else if (condition == 'B') {
+    //start Test with Condition B - Non-Reactive
+    //startAudioFile
+  } else {
+    //error
+  }
+  data = createWriter("paticipant_" +participantNumber + "condition_" + condition+"_time_"+ currentTime+ "_data.txt");
+  data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
+
+  //logging of data occurs every frame in Draw()
+}
+
+void EndTest() { 
+  data.flush();
+  data.close();  
+  recordData = false;
+  participantNumber ++;
+}
 
 void UpdateAudioParameters() {
   amp_m = AP.meanAmplitude();
@@ -180,22 +214,16 @@ float supershape(float theta, Shape S) {
 
 
 PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
-
   PVector[][] vertices = new PVector[total + 1][total + 1];
-
   for (int i = 0; i < total+1; i++) {
-
     float lat = map(i, 0, total, -HALF_PI, HALF_PI);
     float r2 = supershape(lat, s2);
-
     for (int j = 0; j < total+1; j++) {
       float lon = map(j, 0, total, -PI, PI);
       float r1 = supershape(lon, s1);
-
       float x = r * r1 * cos(lon) * r2 * cos(lat);
       float y = r * r1 * sin(lon) * r2 *cos(lat);
       float z = r * r2 * sin(lat);
-
       float offset = 0;
       if (RT) {
         offset = random(-100, 100)*amp_rt;
@@ -219,6 +247,7 @@ void DrawShape(PVector[][] v) {
     endShape();
   }
 }
+
 
 void gui() {
   currCameraMatrix = new PMatrix3D(g3.camera);
