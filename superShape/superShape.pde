@@ -6,8 +6,10 @@ import controlP5.*;
 import peasy.*;
 
 static int participantNumber = 0;
-
+char condition = ' ';
 PrintWriter data;
+String filename;
+
 PMatrix3D currCameraMatrix;
 PGraphics3D g3;
 
@@ -79,7 +81,7 @@ void setup() {
 
 void draw() {
   MoveCamera();
-  UpdateAudioParameters();
+  UpdateAudioParameters(condition);
   CalibrateValues();
 
   float col_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0, 255);
@@ -143,12 +145,15 @@ void draw() {
 void keyPressed() {
   switch(key) {
   case 'a':
+    println("Starting Test");
     StartTest('A');
     break;
   case 'b':
+    println("Starting Test");
     StartTest('B');
     break;
   case 'e':
+    println("Ending Test");
     EndTest();
     break;
   case 'g':
@@ -160,6 +165,7 @@ void keyPressed() {
     //recordData = true;
     break;
   case ' ':
+    println("Event Noted");
     eventRecognized = 1; 
     break;
   default:
@@ -168,10 +174,11 @@ void keyPressed() {
 }
 
 
-void StartTest(char condition) {
+void StartTest(char _condition) {
   //get Participant Number
+  condition = _condition;
   recordData = true;
-  String currentTime = day()+ "_" + hour()+ "_" + minute();
+  String currentTime = "date_" + day()+ "_" +month()+ "_time_" + hour()+ "_" + minute();
   if (condition == 'A') {
     //start Test with Condition A - Reactive
     //start Audio File
@@ -181,24 +188,42 @@ void StartTest(char condition) {
   } else {
     //error
   }
-  data = createWriter("paticipant_" +participantNumber + "condition_" + condition+"_time_"+ currentTime+ "_data.txt");
+  println("Participant Number " + participantNumber + ", Condition " + condition);
+  filename = "paticipant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
+  data = createWriter(filename);
   data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
 
   //logging of data occurs every frame in Draw()
 }
 
 void EndTest() { 
+  println("Saving Data to file: " + filename);
   data.flush();
   data.close();  
   recordData = false;
+  println("Incrementing Participant Number");
   participantNumber ++;
 }
 
-void UpdateAudioParameters() {
-  amp_m = AP.meanAmplitude();
-  amp_rt = AP.rtAmplitude();
-  frq_m = AP.meanFrequency();
-  frq_rt = AP.rtFrequency();
+void UpdateAudioParameters(char _condition) {
+  if (_condition == 'A') {
+    //Reactive to Mic Input
+    amp_m = AP.meanAmplitude();
+    amp_rt = AP.rtAmplitude();
+    frq_m = AP.meanFrequency();
+    frq_rt = AP.rtFrequency();
+  } else if (_condition =='B') {
+    //reactive to AudioFile data
+
+    //amp_m = AP.meanAmplitude();
+    //amp_rt = AP.rtAmplitude();
+    //frq_m = AP.meanFrequency();
+    //frq_rt = AP.rtFrequency();
+  } else if (_condition == ' ') {
+    //not initialized
+  } else {
+    //error
+  }
 }
 
 
