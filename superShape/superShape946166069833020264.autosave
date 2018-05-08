@@ -44,7 +44,6 @@ void setup() {
 
   minim = new Minim(this);
   AP = new AudioProcessing();
-  player = minim.loadFile("Audio/test.wav");
   playerA = minim.loadFile("Audio/soundscape_A.wav");
   playerB = minim.loadFile("Audio/soundscape_B.wav");
 
@@ -86,74 +85,25 @@ void draw() {
   m = map(amp_m, 0, calibrationAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
-  total=25;
-  PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
-  DrawShape(v);
+  r = 200;
+  DrawShape(CalculateVertices(OuterShapeA, OuterShapeB, false));
 
-
-
-  pushMatrix();
-  scale(0.2);
-  translate(0, 0, -250);
-  DrawShape(v);
-  
-  total = 10;
   colorMode(RGB);
+  strokeWeight(0.5);
   stroke(255 - col_rt);
   fill(col_rt);
-  strokeWeight(5);
 
+  //Inner Shape 1
+  r = 5;
   pushMatrix();
-  //orbit
+  translate(0, 0, -50);
   rotateX(-rot);
   rotateY(-rot*0.5);
   rotateZ(rot*2);
-  translate(0, 0, 250);
-  //local rotation
-  rotateX(rot*5);
-  scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
-  popMatrix();
-  
-  pushMatrix();
-  //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
-  translate(0, 0, -250);
-  //local rotation
-  rotateX(rot*5);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
-  popMatrix();
-  
-  pushMatrix();
-  //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
-  translate(0, 250, 0);
-  //local rotation
-  rotateX(rot*5);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
-  popMatrix();
-    
-  pushMatrix();
-  //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
-  translate(0, -250, 0);
-  //local rotation
-  rotateX(rot*5);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
-  popMatrix();
-  
   popMatrix();
 
-  
+
   rot += 0.001;
   noiseIndex += 0.01;
   hu += update_m;
@@ -292,7 +242,7 @@ PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
       float z = r * r2 * sin(lat);
       float offset = 0;
       if (RT) {
-        offset = random(-100, 100)*amp_rt;
+        offset = random(-10, 10)*amp_rt;
       }
       vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
     }
