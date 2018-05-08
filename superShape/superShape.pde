@@ -21,6 +21,8 @@ boolean GUI;
 boolean recordData;
 ControlP5 controller;
 
+float m = 0;
+
 float aM = 1.0;
 float an1 = 1.0;
 float an2 = 1.0;
@@ -32,7 +34,7 @@ float bn2 = 1.0;
 float bn3 = 1.0;
 
 PeasyCam cam;
-int total;
+int total = 25;
 int loggedTotal;
 float r = 200;  
 
@@ -97,8 +99,10 @@ void draw() {
 
   colorMode(RGB);
   background(0);
-  total = int(map(amp_m, 0, calibrationAmp, 10, 100));
-  loggedTotal = total;
+  m = int(map(amp_m, 0, calibrationAmp, 0, 100));
+  //loggedTotal = total;
+  OuterShapeA.UpdateValues(m);
+  OuterShapeB.UpdateValues(m);
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
 
   colorMode(HSB);
@@ -123,7 +127,7 @@ void draw() {
   stroke(255 - col_rt);
   fill(col_rt);
 
-  total = 50;
+  //total = 50;
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
 
