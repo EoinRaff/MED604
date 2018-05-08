@@ -1,7 +1,6 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import ddf.minim.spi.*;
-import controlP5.*;
 import peasy.*;
 
 static int participantNumber = 0;
@@ -9,29 +8,13 @@ char condition = 'A';
 PrintWriter data;
 String filename;
 
-PMatrix3D currCameraMatrix;
-PGraphics3D g3;
-
 Minim minim;
 AudioProcessing AP;
-//ConditionB conditionB;
 AudioPlayer player, playerA, playerB;
 
-boolean GUI;
 boolean recordData;
-ControlP5 controller;
 
 float m = 0;
-
-float aM = 1.0;
-float an1 = 1.0;
-float an2 = 1.0;
-float an3 = 1.0;
-
-float bM = 1.0;
-float bn1 = 1.0;
-float bn2 = 1.0;
-float bn3 = 1.0;
 
 PeasyCam cam;
 int total = 25;
@@ -57,7 +40,6 @@ void setup() {
   //size(96, 52, P3D);
   //fullScreen(P3D);
 
-  g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
 
   minim = new Minim(this);
@@ -66,19 +48,12 @@ void setup() {
   playerA = minim.loadFile("Audio/soundscape_A.wav");
   playerB = minim.loadFile("Audio/soundscape_B.wav");
 
-  InitializeGUI();
   // Create Shapes
-  TestShapeA = new Shape(aM, an1, an2, an3, 1.0, 1.0);
-  TestShapeB = new Shape(bM, bn1, bn2, bn3, 1.0, 1.0);
-
   OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
   OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
 
   InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
   InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
-
-  spinningTopA  = new Shape(0.59, 2.0, 2.0, 2.0);
-  spinningTopB  = new Shape(3.99, 0.58, 1.24, 0.96);
 
   minAmp = 999999;
   maxAmp = 0;
@@ -99,11 +74,10 @@ void draw() {
 
   colorMode(RGB);
   background(0);
-  m = int(map(amp_m, 0, calibrationAmp, 0, 20));
+  m = map(amp_m, 0, calibrationAmp, 0, 10);
   println(amp_m, m);
-  //loggedTotal = total;
   OuterShapeA.UpdateValues(m);
-  //OuterShapeB.UpdateValues(m);
+  OuterShapeB.UpdateValues(m);
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
 
   colorMode(HSB);
@@ -128,21 +102,11 @@ void draw() {
   stroke(255 - col_rt);
   fill(col_rt);
 
-  //total = 50;
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+
+  //make for loop which will draw Inner shapes
+  
   popMatrix();
-
-
-  if (GUI) {
-    //Update Values is needed to make a reactive SuperShape
-    //i.e. one which will change based on M, n1, n2, n3 values.
-    //These could be manipulated via GUI or AP
-
-    //TestShapeA.UpdateValues(aM, an1, an2, an3);
-    //TestShapeB.UpdateValues(bM, bn1, bn2, bn3);
-
-    gui();
-  }
 
   rot += 0.001;
   noiseIndex += 0.01;
@@ -152,15 +116,15 @@ void draw() {
     data.println(millis()+","+eventRecognized+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
 
   eventRecognized = 0;
-  if(player != null){
-    if(!player.isPlaying() && recordData){
+
+  if (player != null) {
+    if (!player.isPlaying() && recordData) {
       println("Audio File ended");
       EndTest();
     }
-  }else {
+  } else {
     //println("no working player");
   }
-  //println(amp_m, amp_rt, frq_m, frq_rt);
 }
 
 
@@ -179,7 +143,7 @@ void keyPressed() {
     EndTest();
     break;
   case 'g':
-    GUI = !GUI;
+    //GUI = !GUI;
     break;
   case 'p': 
     data.close();
@@ -201,12 +165,10 @@ void StartTest(char _condition) {
   recordData = true;
   String currentTime = "date_" + day()+ "_" +month()+ "_time_" + hour()+ "_" + minute();
   if (condition == 'A') {
-    //TODO: check if desired file is already loaded
-    println("loading file");
+    println("loading file " + condition);
     player = playerA;
     println("file loaded");
     filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
-    //TODO:check if this loops by default or not
   } else if (condition == 'B') {
     noiseIndex = 0;
     player = playerB;
@@ -214,7 +176,7 @@ void StartTest(char _condition) {
   } else if (condition == ' ') {
     //println("Calibrating");
     //maybe replace with calibration file
-    player = minim.loadFile("Audio/soundscape_A.wav");
+    //player = minim.loadFile("Audio/soundscape_A.wav");
     //filename=("calibrataion_data.txt");
   } else {
     //error
@@ -305,30 +267,6 @@ void DrawShape(PVector[][] v) {
     endShape();
   }
 }
-
-
-void gui() {
-  currCameraMatrix = new PMatrix3D(g3.camera);
-  camera();
-  g3.camera = currCameraMatrix;
-}
-
-
-void InitializeGUI() {
-  GUI = false;
-  controller = new ControlP5(this);
-  controller.addSlider("aM", 0, 100, 5, 20, 10, 10, height-100); 
-  controller.addSlider("an1", 0, 2, 0.3, 50, 10, 10, 100); 
-  controller.addSlider("an2", 0, 2, 0.3, 80, 10, 10, 100); 
-  controller.addSlider("an3", 0, 2, 0.3, 110, 10, 10, 100); 
-  controller.addSlider("bM", 0, 100, 5, width-20, 10, 10, height-100); 
-  controller.addSlider("bn1", 0, 2, 1.0, width-50, 10, 10, 100); 
-  controller.addSlider("bn2", 0, 2, 1.0, width-80, 10, 10, 100); 
-  controller.addSlider("bn3", 0, 2, 1.0, width-110, 10, 10, 100); 
-  controller.addSlider("r", 0, 200, 200, 20, height-20, 500, 10);
-  controller.setAutoDraw(false);
-}
-
 
 void MoveCamera() {
   float angle = 10;
