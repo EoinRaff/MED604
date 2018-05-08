@@ -99,10 +99,11 @@ void draw() {
 
   colorMode(RGB);
   background(0);
-  m = int(map(amp_m, 0, calibrationAmp, 0, 100));
+  m = int(map(amp_m, 0, calibrationAmp, 0, 20));
+  println(amp_m, m);
   //loggedTotal = total;
   OuterShapeA.UpdateValues(m);
-  OuterShapeB.UpdateValues(m);
+  //OuterShapeB.UpdateValues(m);
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
 
   colorMode(HSB);
@@ -157,7 +158,7 @@ void draw() {
       EndTest();
     }
   }else {
-    println("no working player");
+    //println("no working player");
   }
   //println(amp_m, amp_rt, frq_m, frq_rt);
 }
