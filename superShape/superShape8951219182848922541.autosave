@@ -25,6 +25,7 @@ Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB
 
 int index = 0;
 int eventRecognized = 0;
+int numberOfInnerShapes;
 float noiseIndex = 0;
 float hu = 0;
 float rot = 0;
@@ -60,6 +61,8 @@ void setup() {
   minFrq = 999999;
   maxFrq = 0;
 
+  numberOfInnerShapes = 5;
+
   recordData = false;
 }
 
@@ -82,28 +85,32 @@ void draw() {
 
   stroke(hu%255, 255, 255);
   fill(255-(hu%255), 255, col_m);
-
   m = map(amp_m, 0, calibrationAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
   DrawShape(CalculateVertices(OuterShapeA, OuterShapeB, false));
 
   colorMode(RGB);
-  pushMatrix();
-  scale(0.2);
-  translate(0, 0, -250);
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
   strokeWeight(5);
-
   stroke(255 - col_rt);
   fill(col_rt);
 
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
-
-  //make for loop which will draw Inner shapes
-
+  pushMatrix();
+  scale(0.2);
+  translate(0, 0, -250);
+  for (int i = 0; i < numberOfInnerShapes; i++) {
+    pushMatrix();
+    scale(noise(i)*);
+    //    rotateX(-rot);
+    //rotateY(-rot*0.5);
+    //rotateZ(rot*2);
+    translate(noise(i*10)*2000, noise(i*10)*2000, 0);
+    //rotateX(-rot);
+    //rotateY(-rot*0.5);
+    //rotateZ(rot*2);
+    DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+    popMatrix();
+  }
   popMatrix();
 
   rot += 0.001;
