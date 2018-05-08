@@ -1,15 +1,21 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
-
+import ddf.minim.spi.*;
 import controlP5.*;
-
 import peasy.*;
 
+static int participantNumber = 0;
+char condition = 'A';
 PrintWriter data;
+String filename;
+
 PMatrix3D currCameraMatrix;
 PGraphics3D g3;
 
+Minim minim;
 AudioProcessing AP;
+//ConditionB conditionB;
+AudioPlayer player, playerA, playerB;
 
 boolean GUI;
 boolean recordData;
@@ -33,7 +39,8 @@ float r = 200;
 Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB, spinningTopA, spinningTopB;
 
 int index = 0;
-
+int eventRecognized = 0;
+float noiseIndex = 0;
 float hu = 0;
 float rot = 0;
 float amp_m, frq_m, amp_rt, frq_rt;
@@ -42,18 +49,20 @@ float calibrationAmp = 0.20; //this value needs to be calibrated for each enviro
 //In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
 
 void setup() {
+  noiseSeed(0);
   frameRate(60);
-  data = createWriter("data.txt");
-  data.println("elapsedTime,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
-
-  //size(900, 720, P3D);
+  size(900, 720, P3D);
   //size(96, 52, P3D);
-  fullScreen(P3D);
+  //fullScreen(P3D);
 
   g3 = (PGraphics3D)g;
   cam = new PeasyCam(this, 100);
 
+  minim = new Minim(this);
   AP = new AudioProcessing();
+  player = minim.loadFile("Audio/test.wav");
+  playerA = minim.loadFile("Audio/soundscape_A.wav");
+  playerB = minim.loadFile("Audio/soundscape_B.wav");
 
   InitializeGUI();
   // Create Shapes
@@ -79,7 +88,7 @@ void setup() {
 
 void draw() {
   MoveCamera();
-  UpdateAudioParameters();
+  UpdateAudioParameters(condition);
   CalibrateValues();
 
   float col_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0, 255);
@@ -131,22 +140,50 @@ void draw() {
   }
 
   rot += 0.001;
+  noiseIndex += 0.01;
   hu += update_m;
+
   if (recordData)
-    data.println(millis()+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate+";");
+    data.println(millis()+","+eventRecognized+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
+
+  eventRecognized = 0;
+  if(player != null){
+    if(!player.isPlaying() && recordData){
+      println("Audio File ended");
+      EndTest();
+    }
+  }else {
+    println("no working player");
+  }
+  //println(amp_m, amp_rt, frq_m, frq_rt);
 }
 
 
 void keyPressed() {
   switch(key) {
+  case 'a':
+    println("Starting Test");
+    StartTest('A');
+    break;
+  case 'b':
+    println("Starting Test");
+    StartTest('B');
+    break;
+  case 'e':
+    println("Ending Test");
+    EndTest();
+    break;
   case 'g':
     GUI = !GUI;
     break;
-  case 'p':
-    data.flush();
+  case 'p': 
     data.close();
   case 'r':
-    recordData = true;
+    //recordData = true;
+    break;
+  case ' ':
+    println("Event Noted");
+    eventRecognized = 1; 
     break;
   default:
     break;
@@ -154,11 +191,67 @@ void keyPressed() {
 }
 
 
-void UpdateAudioParameters() {
-  amp_m = AP.meanAmplitude();
-  amp_rt = AP.rtAmplitude();
-  frq_m = AP.meanFrequency();
-  frq_rt = AP.rtFrequency();
+void StartTest(char _condition) {
+  condition = _condition;
+  recordData = true;
+  String currentTime = "date_" + day()+ "_" +month()+ "_time_" + hour()+ "_" + minute();
+  if (condition == 'A') {
+    //TODO: check if desired file is already loaded
+    println("loading file");
+    player = playerA;
+    println("file loaded");
+    filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
+    //TODO:check if this loops by default or not
+  } else if (condition == 'B') {
+    noiseIndex = 0;
+    player = playerB;
+    filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
+  } else if (condition == ' ') {
+    //println("Calibrating");
+    //maybe replace with calibration file
+    player = minim.loadFile("Audio/soundscape_A.wav");
+    //filename=("calibrataion_data.txt");
+  } else {
+    //error
+  }
+  println("Participant Number " + participantNumber + ", Condition " + condition);
+  filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
+  data = createWriter("Data/"+filename);
+  data.println("elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;");
+  println("Playing AudioFile");
+  player.play();
+  //logging of data occurs every frame in Draw()
+}
+
+void EndTest() { 
+  if (player.isPlaying()) {
+    player.pause();
+    player.rewind();
+  }
+  println("Saving Data to file: " + filename);
+  data.flush();
+  data.close();  
+  recordData = false;
+  println("Incrementing Participant Number");
+  participantNumber ++;
+}
+
+void UpdateAudioParameters(char _condition) {
+  if (_condition == 'A' || _condition == ' ') {
+    //Reactive to Mic Input
+    amp_m = AP.meanAmplitude();
+    amp_rt = AP.rtAmplitude();
+    frq_m = AP.meanFrequency();
+    frq_rt = AP.rtFrequency();
+  } else if (_condition =='B') {
+    //reactive to AudioFile data
+    amp_m = noise(noiseIndex)*0.01;
+    amp_rt = noise(noiseIndex)*0.01;
+    frq_m = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
+    frq_rt = noise(noiseIndex);
+  } else {
+    //error
+  }
 }
 
 
@@ -174,22 +267,16 @@ float supershape(float theta, Shape S) {
 
 
 PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
-
   PVector[][] vertices = new PVector[total + 1][total + 1];
-
   for (int i = 0; i < total+1; i++) {
-
     float lat = map(i, 0, total, -HALF_PI, HALF_PI);
     float r2 = supershape(lat, s2);
-
     for (int j = 0; j < total+1; j++) {
       float lon = map(j, 0, total, -PI, PI);
       float r1 = supershape(lon, s1);
-
       float x = r * r1 * cos(lon) * r2 * cos(lat);
       float y = r * r1 * sin(lon) * r2 *cos(lat);
       float z = r * r2 * sin(lat);
-
       float offset = 0;
       if (RT) {
         offset = random(-100, 100)*amp_rt;
@@ -213,6 +300,7 @@ void DrawShape(PVector[][] v) {
     endShape();
   }
 }
+
 
 void gui() {
   currCameraMatrix = new PMatrix3D(g3.camera);
@@ -240,7 +328,6 @@ void InitializeGUI() {
 void MoveCamera() {
   float angle = 10;
   cam.rotateX(cos(angle)*0.0005);
-  //cam.rotateY(cos(angle)*0.01);
   cam.rotateZ(cos(angle)*0.001);
 }
 
@@ -249,18 +336,13 @@ void CalibrateValues() {
   if (amp_rt > maxAmp) {
     maxAmp = amp_rt;
   }
-
   if (amp_rt < minAmp) {
     minAmp = amp_rt;
   }
-
   if (frq_rt > maxFrq) {
     maxFrq = frq_rt;
   }
-
   if (frq_rt < minFrq) {
     minFrq = frq_rt;
   }
-
-  //println("Max : " + maxAmp + ", Min: " + minAmp);
 }

@@ -1,4 +1,3 @@
-
 /* This is a class for ALL the sound processing. 
  It got four methods, one for real-time amplitude, one for real-time frequency,
  one for amplitude over time and one for frequency over time */
@@ -49,15 +48,9 @@ class AudioProcessing {
 
   float meanAmplitude() {
     sum += (((in.left.level()+in.right.level())/2) - sum) * smoothFactor;   // Smooth the data by smoothing factor - in.left/right.level returns the current amplitude in that channel
-
     amplitudes.append(sum);                         // Add the current amplitude to the list                       // Get the elapsed time
     amplitudes.remove(0);
-    //if (millis() > time_amp + timeBetween) {
-    meanamp = calcAverageAmp(amplitudes);            // Call the calcAverageAmp method to calculate the mean over the last X seconds
-    //time_amp = millis();
-    //amplitudes.clear();                           // Clear the list to only get mean over the latest 5 seconds
-    //} 
-    return meanamp;
+    return calcAverageAmp(amplitudes);            // Call the calcAverageAmp method to calculate the mean over the last X seconds
   }
 
   float rtFrequency() {
@@ -70,14 +63,11 @@ class AudioProcessing {
       }
     }
     return calcAverageFreq(frequencies);
-    //return meanfreqrt;
   }
 
   float meanFrequency() {
     fft.forward( in.mix );
-
     for (int i = 0; i < fft.specSize(); i++) {
-
       if ( fft.getBand(i) > ampThreshold ) {
         frequencies.append( int(fft.indexToFreq(i)) );
         frequencies.remove(0);
@@ -91,7 +81,6 @@ class AudioProcessing {
 
   float calcAverageAmp(FloatList input) {        // Method to calculate the mean of the last 5 seconds of amplitudes
     float out = 0.0f;
-
     for (int i = 0; i < input.size(); i++) {
       out += input.get(i);                      // Get the sum of all the amplitudes
     }
@@ -108,7 +97,7 @@ class AudioProcessing {
       }
       out = out/input.size();
       return out;
-    } else return meanfreq;
+    } else return 0;
   }
 
   void stop() {
