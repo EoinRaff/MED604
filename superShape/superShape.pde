@@ -96,7 +96,7 @@ void draw() {
   scale(0.2);
   translate(0, 0, -250);
   DrawShape(v);
-  
+
   total = 10;
   colorMode(RGB);
   stroke(255 - col_rt);
@@ -114,7 +114,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateX(-rot);
@@ -126,7 +126,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateX(-rot);
@@ -138,7 +138,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-    
+
   pushMatrix();
   //orbit
   rotateX(-rot);
@@ -150,10 +150,10 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   popMatrix();
 
-  
+
   rot += 0.001;
   noiseIndex += 0.01;
   hu += update_m;
@@ -192,7 +192,9 @@ void keyPressed() {
     //GUI = !GUI;
     break;
   case 'p': 
-    data.close();
+    println("Incrementing Participant Number");
+    participantNumber ++;
+    println("Ready to Test Participant number " + participantNumber);
   case 'r':
     //recordData = true;
     break;
@@ -245,8 +247,6 @@ void EndTest() {
   data.flush();
   data.close();  
   recordData = false;
-  println("Incrementing Participant Number");
-  participantNumber ++;
 }
 
 void UpdateAudioParameters(char _condition) {
