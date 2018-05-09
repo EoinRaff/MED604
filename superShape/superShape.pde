@@ -23,6 +23,9 @@ float r = 200;
 
 Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB, spinningTopA, spinningTopB;
 
+Shape star5A;
+Shape star5B;
+
 int index = 0;
 int eventRecognized = 0;
 float noiseIndex = 0;
@@ -56,9 +59,16 @@ void setup() {
 
   // Create Shapes
   println("Creating Initial Shape Parameters");
-  OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
-  OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
 
+  
+  star5A  = new Shape(4.89, 0.38, 1.12, 0.47);
+  star5B  = new Shape(9.09, 0.71, 0.79, 1.12);
+
+  //OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
+  //OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
+  OuterShapeA = star5A;
+  OuterShapeB = star5B;
+  
   InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
   InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
 
