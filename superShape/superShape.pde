@@ -67,6 +67,8 @@ void setup() {
   Shape speakerA  = new Shape(4.0, 0.3, 0.3, 0.3);
   Shape speakerB  = new Shape(0.18, 1, 1, 0.5);
 
+  Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24);
+  Shape flowerB = new Shape(10.0, 2.0, 2.0, 2.0);
 
   Shape lemonA  = new Shape(18.9, 1.0, 1.0, 0.5);
   Shape lemonB  = new Shape(3.0, 0.3, 0.3, 0.85);
@@ -77,8 +79,8 @@ void setup() {
   InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
   InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
   
-  InnerShapeA = lemonA;
-  InnerShapeB = lemonB;
+  InnerShapeA = flowerA;
+  InnerShapeB = flowerB;
 
   println("Initializing Values for Ampitude and Frequency Calibration");
   minAmp = 999999;
@@ -96,11 +98,11 @@ void draw() {
   UpdateAudioParameters(condition);
   CalibrateValues();
 
-  float col_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0, 255);
-  float col_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
-  float update_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0.01, 1.0);
+  float brightness_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 127, 255);
+  float brightness_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
+  float brightness_m_inner = map(frq_m, minFrq*0.9, maxFrq*1.1, 127, 255);
   float orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.01);
-  float rotationSpeed = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.05);
+  float rotationSpeed = map(amp_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.05);
 
   background(0);
   lights();
@@ -110,19 +112,20 @@ void draw() {
 
   //OuterShape
   stroke(hu%255, 255, 255);
-  fill(255-(hu%255), 255, col_m);
+  fill(255-(hu%255), 255, brightness_m);
   m = map(amp_m, 0, maxAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
   star5A.UpdateValues(m);
-  star5A.UpdateValues(m);
+  star5B.UpdateValues(m);
   //m = map(amp_rt, 0, maxAmp, 0, 5);
   //InnerShapeA.UpdateValues(m);
   //InnerShapeB.UpdateValues(m);
 
   lod = 25;
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
-  PVector[][] v2 = CalculateVertices(star5A, star5B, false);
+  PVector[][] v2 = CalculateVertices(star5B, star5A, false);
+  PVector[][] v3 = CalculateVertices(InnerShapeA, InnerShapeB, true);
 
   DrawShape(v);
 
@@ -130,15 +133,18 @@ void draw() {
   pushMatrix();
   scale(0.2);
   translate(0, 0, -250);
-  fill(255-(hu%255), 255, 200);
+  fill(255-(hu%255), 255, brightness_m_inner);
   DrawShape(v2);
 
   //Orbiting Shapes:
-  lod = 10;
-  colorMode(RGB);
-  fill(col_m,col_m,255-col_m);
-  stroke(255-col_m,255-col_m,col_m);
-  strokeWeight(5);
+  //lod = 25;
+  //colorMode(RGB);
+  
+  fill(127+(hu%255), 255, brightness_rt);  
+  
+  //stroke(255-col_m,255-col_m,col_m);
+  noStroke();
+  strokeWeight(20);
 
   pushMatrix();
   //orbit
@@ -148,8 +154,8 @@ void draw() {
   rotateX(rot);
   rotateY(rot);
   rotateZ(rot);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  scale(0.15);
+  DrawShape(v3);
   popMatrix();
 
   pushMatrix();
@@ -161,8 +167,8 @@ void draw() {
   rotateX(rot);
   rotateY(rot);
   rotateZ(rot);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  scale(0.15);
+  DrawShape(v3);
   popMatrix();
 
   pushMatrix();
@@ -173,8 +179,8 @@ void draw() {
   rotateX(rot);
   rotateY(rot);
   rotateZ(rot);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  scale(0.15);
+  DrawShape(v3);
   popMatrix();
 
   pushMatrix();
@@ -185,8 +191,8 @@ void draw() {
   rotateX(rot);
   rotateY(rot);
   rotateZ(rot);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  scale(0.15);
+  DrawShape(v3);
   popMatrix();
 
   pushMatrix();
@@ -198,8 +204,8 @@ void draw() {
   rotateX(rot);
   rotateY(rot);
   rotateZ(rot);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  scale(0.15);
+  DrawShape(v3);
   popMatrix();
 
   pushMatrix();
@@ -210,8 +216,8 @@ void draw() {
   rotateX(rot);
   rotateY(rot);
   rotateZ(rot);
-  scale(0.25);
-  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  scale(0.15);
+  DrawShape(v3);
   popMatrix();
 
 
@@ -220,10 +226,9 @@ void draw() {
   rot += rotationSpeed;
   orbit += orbitSpeed;
   noiseIndex += 0.01;
-  hu += update_m;
-
+  hu += 0.01;
   if (recordData)
-    data.println(millis()+","+eventRecognized+","+frq_rt +","+ col_rt+","+frq_m+","+col_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
+    data.println(millis()+","+eventRecognized+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
 
   eventRecognized = 0;
 
