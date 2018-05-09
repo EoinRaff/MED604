@@ -77,7 +77,7 @@ void draw() {
 
   colorMode(RGB);
   background(0);
-
+  lights();
   colorMode(HSB);
   strokeWeight(2);
 
