@@ -26,8 +26,9 @@ class AudioProcessing {
 
   int bufferSize = 420; //approx 5 seconds at 60 fps
 
-  AudioProcessing() {         // Class constructor
-    minim = new Minim(this);
+  AudioProcessing(Minim _minim) {         // Class constructor
+    //minim = new Minim(this);
+    minim = _minim;
     in = minim.getLineIn();
     fft = new FFT( in.bufferSize(), in.sampleRate() );
     amplitudes = new FloatList();

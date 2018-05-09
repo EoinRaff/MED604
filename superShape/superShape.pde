@@ -35,33 +35,42 @@ float calibrationAmp = 0.20; //this value needs to be calibrated for each enviro
 //In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
 
 void setup() {
+  println("Performing Initial Setup");
+  println("Generating Perlin Noise Seed");
   noiseSeed(0);
+  println("Locking framerate @ 60fps");
   frameRate(60);
-  size(900, 720, P3D);
+  //size(900, 720, P3D);
   //size(96, 52, P3D);
-  //fullScreen(P3D);
+  fullScreen(P3D, 2);
 
-  cam = new PeasyCam(this, 100);
-
+  println("Preparing Camera");
+  cam = new PeasyCam(this, 150);
+  println("Preparing Minim");
   minim = new Minim(this);
-  AP = new AudioProcessing();
-  player = minim.loadFile("Audio/test.wav");
+  println("Initializing Audio Processing script");
+  AP = new AudioProcessing(minim);
+  println("Loading Audio Files");
   playerA = minim.loadFile("Audio/soundscape_A.wav");
   playerB = minim.loadFile("Audio/soundscape_B.wav");
 
   // Create Shapes
+  println("Creating Initial Shape Parameters");
   OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
   OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
 
   InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
   InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
 
+  println("Initializing Values for Ampitude and Frequency Calibration");
   minAmp = 999999;
   maxAmp = 0;
   minFrq = 999999;
   maxFrq = 0;
 
   recordData = false;
+  println("Ready!");
+  PrintInstructions();
 }
 
 void draw() {
@@ -94,7 +103,7 @@ void draw() {
   lod = 25;
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
   //PVector[][] v2 = CalculateVertices(InnerShapeA, InnerShapeB, true);
-  
+
   DrawShape(v);
 
   //Center Shape
@@ -122,7 +131,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateX(orbit);
@@ -135,7 +144,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateY(orbit);
@@ -147,7 +156,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateX(-orbit);
@@ -159,7 +168,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateX(-orbit);
@@ -172,7 +181,7 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
+
   pushMatrix();
   //orbit
   rotateY(-orbit);
@@ -184,8 +193,8 @@ void draw() {
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-  
-  
+
+
   popMatrix();
 
   rot += rotationSpeed;
@@ -282,6 +291,8 @@ void EndTest() {
   data.flush();
   data.close();  
   recordData = false;
+  println("Test Finished. Ready for Next Test.");
+  PrintInstructions();
 }
 
 void UpdateAudioParameters(char _condition) {
@@ -370,4 +381,11 @@ void CalibrateValues() {
   if (frq_rt < minFrq) {
     minFrq = frq_rt;
   }
+}
+
+void PrintInstructions() {
+  println("----------------------------------------------------------------------");
+  println("Press <a> to begin condition A. Press <b> to begin condition B.");
+  println("Press <p> to prepare for next participant. \nPress <e> to end test early.");
+  println("----------------------------------------------------------------------");
 }
