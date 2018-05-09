@@ -17,7 +17,7 @@ boolean recordData;
 float m = 0;
 
 PeasyCam cam;
-int total = 25;
+int lod = 25;
 int loggedTotal;
 float r = 200;  
 
@@ -77,27 +77,26 @@ void draw() {
 
   colorMode(HSB);
   strokeWeight(2);
-  stroke(col_m);
-  fill(255-col_m);
 
+  //OuterShape
   stroke(hu%255, 255, 255);
   fill(255-(hu%255), 255, col_m);
-
   m = map(amp_m, 0, calibrationAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
-  total=25;
+  lod = 25;
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
   DrawShape(v);
 
-
-
+  //Center Shape
   pushMatrix();
   scale(0.2);
   translate(0, 0, -250);
+  fill(255-(hu%255), 255, 200);
   DrawShape(v);
 
-  total = 10;
+  //Orbiting Shapes:
+  lod = 10;
   colorMode(RGB);
   stroke(255 - col_rt);
   fill(col_rt);
@@ -280,12 +279,12 @@ float supershape(float theta, Shape S) {
 
 
 PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
-  PVector[][] vertices = new PVector[total + 1][total + 1];
-  for (int i = 0; i < total+1; i++) {
-    float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+  PVector[][] vertices = new PVector[lod + 1][lod + 1];
+  for (int i = 0; i < lod+1; i++) {
+    float lat = map(i, 0, lod, -HALF_PI, HALF_PI);
     float r2 = supershape(lat, s2);
-    for (int j = 0; j < total+1; j++) {
-      float lon = map(j, 0, total, -PI, PI);
+    for (int j = 0; j < lod+1; j++) {
+      float lon = map(j, 0, lod, -PI, PI);
       float r1 = supershape(lon, s1);
       float x = r * r1 * cos(lon) * r2 * cos(lat);
       float y = r * r1 * sin(lon) * r2 *cos(lat);
@@ -302,9 +301,9 @@ PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
 
 
 void DrawShape(PVector[][] v) {
-  for (int i = 0; i < total; i++) {
+  for (int i = 0; i < lod; i++) {
     beginShape(TRIANGLE_STRIP);
-    for (int j = 0; j < total + 1; j++) {
+    for (int j = 0; j < lod + 1; j++) {
       PVector v1 = v[i][j];
       PVector v2 = v[i+1][j];
       vertex(v1.x, v1.y, v1.z);
