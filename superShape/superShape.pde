@@ -28,6 +28,7 @@ int eventRecognized = 0;
 float noiseIndex = 0;
 float hu = 0;
 float rot = 0;
+float orbit = 0;
 float amp_m, frq_m, amp_rt, frq_rt;
 float minAmp, maxAmp, minFrq, maxFrq;
 float calibrationAmp = 0.20; //this value needs to be calibrated for each environment
@@ -71,6 +72,8 @@ void draw() {
   float col_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0, 255);
   float col_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
   float update_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0.01, 1.0);
+  float orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.01);
+  float rotationSpeed = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.05);
 
   colorMode(RGB);
   background(0);
@@ -81,11 +84,17 @@ void draw() {
   //OuterShape
   stroke(hu%255, 255, 255);
   fill(255-(hu%255), 255, col_m);
-  m = map(amp_m, 0, calibrationAmp, 0, 10);
+  m = map(amp_m, 0, maxAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
+  //m = map(amp_rt, 0, maxAmp, 0, 5);
+  //InnerShapeA.UpdateValues(m);
+  //InnerShapeB.UpdateValues(m);
+
   lod = 25;
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
+  //PVector[][] v2 = CalculateVertices(InnerShapeA, InnerShapeB, true);
+  
   DrawShape(v);
 
   //Center Shape
@@ -98,62 +107,89 @@ void draw() {
   //Orbiting Shapes:
   lod = 10;
   colorMode(RGB);
-  stroke(255 - col_rt);
-  fill(col_rt);
+  fill(col_m);
+  stroke(255-col_m);
   strokeWeight(5);
 
   pushMatrix();
   //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
+  rotateX(orbit);
   translate(0, 0, 250);
   //local rotation
-  rotateX(rot*5);
+  rotateX(rot);
+  rotateY(rot);
+  rotateZ(rot);
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-
+  
   pushMatrix();
   //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
+  rotateX(orbit);
+  rotateY(orbit);
   translate(0, 0, -250);
   //local rotation
-  rotateX(rot*5);
+  rotateX(rot);
+  rotateY(rot);
+  rotateZ(rot);
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-
+  
   pushMatrix();
   //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
+  rotateY(orbit);
   translate(0, 250, 0);
   //local rotation
-  rotateX(rot*5);
+  rotateX(rot);
+  rotateY(rot);
+  rotateZ(rot);
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-
+  
   pushMatrix();
   //orbit
-  rotateX(-rot);
-  rotateY(-rot*0.5);
-  rotateZ(rot*2);
+  rotateX(-orbit);
   translate(0, -250, 0);
   //local rotation
-  rotateX(rot*5);
+  rotateX(rot);
+  rotateY(rot);
+  rotateZ(rot);
   scale(0.25);
   DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
   popMatrix();
-
+  
+  pushMatrix();
+  //orbit
+  rotateX(-orbit);
+  rotateY(-orbit);
+  translate(250, 0, 0);
+  //local rotation
+  rotateX(rot);
+  rotateY(rot);
+  rotateZ(rot);
+  scale(0.25);
+  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  popMatrix();
+  
+  pushMatrix();
+  //orbit
+  rotateY(-orbit);
+  translate(-250, 0, 0);
+  //local rotation
+  rotateX(rot);
+  rotateY(rot);
+  rotateZ(rot);
+  scale(0.25);
+  DrawShape(CalculateVertices(InnerShapeA, InnerShapeB, true));
+  popMatrix();
+  
+  
   popMatrix();
 
-
-  rot += 0.001;
+  rot += rotationSpeed;
+  orbit += orbitSpeed;
   noiseIndex += 0.01;
   hu += update_m;
 
@@ -260,7 +296,7 @@ void UpdateAudioParameters(char _condition) {
     amp_m = noise(noiseIndex)*0.01;
     amp_rt = noise(noiseIndex)*0.01;
     frq_m = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
-    frq_rt = noise(noiseIndex);
+    frq_rt = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
   } else {
     //error
   }
@@ -291,7 +327,8 @@ PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
       float z = r * r2 * sin(lat);
       float offset = 0;
       if (RT) {
-        offset = random(-100, 100)*amp_rt;
+        //remove this boolean if we want to remove offset
+        //offset = random(-100, 100)*amp_rt;
       }
       vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
     }
