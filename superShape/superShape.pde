@@ -60,17 +60,25 @@ void setup() {
   // Create Shapes
   println("Creating Initial Shape Parameters");
 
-  
-  star5A  = new Shape(4.89, 0.38, 1.12, 0.47);
-  star5B  = new Shape(9.09, 0.71, 0.79, 1.12);
 
-  //OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
-  //OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
-  OuterShapeA = star5A;
-  OuterShapeB = star5B;
-  
+  star5A  = new Shape(5, 0.38, 1.12, 0.47);
+  star5B  = new Shape(10, 0.71, 0.79, 1.12);
+
+  Shape speakerA  = new Shape(4.0, 0.3, 0.3, 0.3);
+  Shape speakerB  = new Shape(0.18, 1, 1, 0.5);
+
+
+  Shape lemonA  = new Shape(18.9, 1.0, 1.0, 0.5);
+  Shape lemonB  = new Shape(3.0, 0.3, 0.3, 0.85);
+
+  OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
+  OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
+
   InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
   InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
+  
+  InnerShapeA = lemonA;
+  InnerShapeB = lemonB;
 
   println("Initializing Values for Ampitude and Frequency Calibration");
   minAmp = 999999;
@@ -94,9 +102,9 @@ void draw() {
   float orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.01);
   float rotationSpeed = map(frq_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.05);
 
-  colorMode(RGB);
   background(0);
   lights();
+  
   colorMode(HSB);
   strokeWeight(2);
 
@@ -106,13 +114,15 @@ void draw() {
   m = map(amp_m, 0, maxAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
+  star5A.UpdateValues(m);
+  star5A.UpdateValues(m);
   //m = map(amp_rt, 0, maxAmp, 0, 5);
   //InnerShapeA.UpdateValues(m);
   //InnerShapeB.UpdateValues(m);
 
   lod = 25;
   PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
-  //PVector[][] v2 = CalculateVertices(InnerShapeA, InnerShapeB, true);
+  PVector[][] v2 = CalculateVertices(star5A, star5B, false);
 
   DrawShape(v);
 
@@ -121,13 +131,13 @@ void draw() {
   scale(0.2);
   translate(0, 0, -250);
   fill(255-(hu%255), 255, 200);
-  DrawShape(v);
+  DrawShape(v2);
 
   //Orbiting Shapes:
   lod = 10;
   colorMode(RGB);
-  fill(col_m);
-  stroke(255-col_m);
+  fill(col_m,col_m,255-col_m);
+  stroke(255-col_m,255-col_m,col_m);
   strokeWeight(5);
 
   pushMatrix();
