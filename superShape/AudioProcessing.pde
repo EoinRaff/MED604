@@ -24,10 +24,11 @@ class AudioProcessing {
   int time = millis();        // Count time between means
   int time_amp = millis();
 
-  int bufferSize = 420; //approx 7 seconds at 60 fps
+  int bufferSize = 420; //approx 5 seconds at 60 fps
 
-  AudioProcessing() {         // Class constructor
-    minim = new Minim(this);
+  AudioProcessing(Minim _minim) {         // Class constructor
+    //minim = new Minim(this);
+    minim = _minim;
     in = minim.getLineIn();
     fft = new FFT( in.bufferSize(), in.sampleRate() );
     amplitudes = new FloatList();

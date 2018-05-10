@@ -16,6 +16,12 @@ public class Shape {
     this.a = 1.0;
     this.b = 1.0;
   }
+  
+    public void UpdateValues(float m)
+  {
+    this.m = m;
+  }
+  
   public void UpdateValues(float m, float n1, float n2, float n3)
   {
     this.m = m;
