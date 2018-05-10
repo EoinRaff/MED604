@@ -98,11 +98,11 @@ void draw() {
   UpdateAudioParameters(condition);
   CalibrateValues();
 
-  float brightness_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 127, 255);
+  float brightness_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 70, 255);
   float brightness_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
   float brightness_m_inner = map(frq_m, minFrq*0.9, maxFrq*1.1, 127, 255);
-  float orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.01);
-  float rotationSpeed = map(amp_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.05);
+  float orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.1);
+  float rotationSpeed = map(amp_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.1);
 
   background(0);
   lights();
@@ -134,13 +134,14 @@ void draw() {
   scale(0.2);
   translate(0, 0, -250);
   fill(255-(hu%255), 255, brightness_m_inner);
+  noStroke();
   DrawShape(v2);
 
   //Orbiting Shapes:
   //lod = 25;
   //colorMode(RGB);
   
-  fill(127+(hu%255), 255, brightness_rt);  
+  fill(127+(hu%255), brightness_rt, brightness_rt);  
   
   //stroke(255-col_m,255-col_m,col_m);
   noStroke();
@@ -174,6 +175,7 @@ void draw() {
   pushMatrix();
   //orbit
   rotateY(orbit);
+  rotateZ(orbit);
   translate(0, 250, 0);
   //local rotation
   rotateX(rot);
@@ -186,6 +188,8 @@ void draw() {
   pushMatrix();
   //orbit
   rotateX(-orbit);
+  rotateY(-orbit);
+  rotateZ(-orbit);
   translate(0, -250, 0);
   //local rotation
   rotateX(rot);
@@ -329,8 +333,8 @@ void UpdateAudioParameters(char _condition) {
     frq_rt = AP.rtFrequency();
   } else if (_condition =='B') {
     //reactive to AudioFile data
-    amp_m = noise(noiseIndex)*0.01;
-    amp_rt = noise(noiseIndex)*0.01;
+    amp_m = map(noise(noiseIndex), 0, 1, minAmp*0.25, maxAmp*0.75);
+    amp_rt = map(noise(noiseIndex), 0, 1, minAmp*0.25, maxAmp*0.75);
     frq_m = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
     frq_rt = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
   } else {
