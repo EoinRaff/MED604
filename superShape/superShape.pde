@@ -100,7 +100,7 @@ void setup() {
   println("Inital Setup Complete.");
   println("*** *** *** *** **** *** *** ***");
   println("Please perform final checks:");
-  println("-Check System Audio set to 20."); //choose value
+  println("-Check System Audio set to 34."); //choose value
   println("-Perform initial run to calibrate values.");
   println("-Check that Zoom recording level set to 100.");
   println("*** *** *** *** *** *** *** ***");
@@ -192,7 +192,7 @@ void draw() {
 
   rot += rotationSpeed;
   orbit += orbitSpeed;
-  noiseIndex += 0.01;
+  noiseIndex += 0.005;
   hu += 0.01;
   if (recordData)
     data.println(millis()+","+eventRecognized_tap+","+eventRecognized_hold+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+orbitSpeed+","+amp_m+","+m+","+frameRate);
@@ -275,7 +275,7 @@ void StartTest(char _condition) {
   println("Participant Number " + participantNumber + ", Condition " + condition);
   filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
   data = createWriter("Data/"+filename);
-  data.println(fileHeader);
+  //data.println(fileHeader);
   println("Playing AudioFile");
   player.play();
   //logging of data occurs every frame in Draw()
