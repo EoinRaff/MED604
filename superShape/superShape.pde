@@ -97,10 +97,15 @@ void setup() {
   maxFrq = 0;
 
   recordData = false;
-  println("Ready!");
+  println("Inital Setup Complete.");
+  println("*** *** *** *** **** *** *** ***");
   println("Please perform final checks:");
-  println("-Check System Audio set to : 25"); //choose value
-  println("-Perform initial run to calibrate values");
+  println("-Check System Audio set to 20."); //choose value
+  println("-Perform initial run to calibrate values.");
+  println("-Check that Zoom recording level set to 100.");
+  println("*** *** *** *** *** *** *** ***");
+  println(" -   -   -   -   -   -   -   - ");
+  println("*** *** *** *** *** *** *** ***");
 
   PrintInstructions();
 }
@@ -238,9 +243,10 @@ void keyPressed() {
     break;
   }
 }
-void keyReleased(){
-  if(key == ' '){
+void keyReleased() {
+  if (key == ' ') {
     eventRecognized_hold = 0;  
+    println("End of Percievent Event");
   }
 }
 
