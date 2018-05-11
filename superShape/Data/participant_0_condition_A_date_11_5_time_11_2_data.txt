@@ -1,0 +1,2 @@
+elapsedTime,eventRecognized,frq_rt, col_rt, frq_m, col_m, amp_rt, amp_m, total, framerate;
+395054,0,2286.5833,98.55995,2459.9512,42.47058,6.559603E-4,0.004289971,0,59.04278

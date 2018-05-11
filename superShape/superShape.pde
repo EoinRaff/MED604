@@ -27,7 +27,8 @@ Shape star5A;
 Shape star5B;
 
 int index = 0;
-int eventRecognized = 0;
+int eventRecognized_tap = 0;
+int eventRecognized_hold = 0;
 float noiseIndex = 0;
 float hu = 0;
 float rot = 0;
@@ -96,6 +97,10 @@ void setup() {
 
   recordData = false;
   println("Ready!");
+  println("Please perform final checks:");
+  println("-Check System Audio set to : 25"); //choose value
+  println("-Perform initial run to calibrate values");
+
   PrintInstructions();
 }
 
@@ -115,7 +120,6 @@ void draw() {
   //OuterShape
   stroke(hu%255, 255, 255);
   fill(255-(hu%255), 255, brightness_m);
-  m = map(amp_m, 0, maxAmp, 0, 10);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
   star5A.UpdateValues(m);
@@ -154,9 +158,9 @@ void draw() {
 
   pushMatrix();
   //orbit
-  rotateX(orbit);
+  //rotateX(orbit);
   rotateY(orbit);
-  translate(0, 0, -250);
+  translate(250, 0, 0);
   //local rotation
   rotateX(rot);
   rotateY(rot);
@@ -167,7 +171,7 @@ void draw() {
 
   pushMatrix();
   //orbit
-  rotateY(orbit);
+  //rotateY(orbit);
   rotateZ(orbit);
   translate(0, 250, 0);
   //local rotation
@@ -185,9 +189,9 @@ void draw() {
   noiseIndex += 0.01;
   hu += 0.01;
   if (recordData)
-    data.println(millis()+","+eventRecognized+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
+    data.println(millis()+","+eventRecognized_tap+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+amp_m+","+loggedTotal+","+frameRate);
 
-  eventRecognized = 0;
+  eventRecognized_tap = 0;
 
   if (player != null) {
     if (!player.isPlaying() && recordData) {
@@ -226,10 +230,16 @@ void keyPressed() {
     break;
   case ' ':
     println("Event Noted");
-    eventRecognized = 1; 
+    eventRecognized_tap = 1; 
+    eventRecognized_hold = 1;
     break;
   default:
     break;
+  }
+}
+void keyReleased(){
+  if(key == ' '){
+    eventRecognized_hold = 0;
   }
 }
 
@@ -267,8 +277,9 @@ void StartTest(char _condition) {
 void EndTest() { 
   if (player.isPlaying()) {
     player.pause();
-    player.rewind();
-  }
+  }    
+  println("Rewinding Player");
+  player.rewind();
   println("Saving Data to file: " + filename);
   data.flush();
   data.close();  
@@ -302,6 +313,7 @@ void MapValues() {
   brightness_m_inner = map(frq_m, minFrq*0.9, maxFrq*1.1, 127, 255);
   orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.1);
   rotationSpeed = map(amp_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.1);
+  m = map(amp_m, 0, maxAmp, 0, 10);
 }
 
 
@@ -330,7 +342,7 @@ PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
       float offset = 0;
       if (RT) {
         //remove this boolean if we want to remove offset
-        //offset = random(-100, 100)*amp_rt;
+        offset = random(-100, 100)*amp_rt;
       }
       vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
     }
