@@ -37,6 +37,12 @@ float minAmp, maxAmp, minFrq, maxFrq;
 float calibrationAmp = 0.20; //this value needs to be calibrated for each environment
 //In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
 
+float brightness_rt;
+float brightness_m;
+float brightness_m_inner;
+float orbitSpeed;
+float rotationSpeed;
+
 void setup() {
   println("Performing Initial Setup");
   println("Generating Perlin Noise Seed");
@@ -78,7 +84,7 @@ void setup() {
 
   InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
   InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
-  
+
   InnerShapeA = flowerA;
   InnerShapeB = flowerB;
 
@@ -94,21 +100,17 @@ void setup() {
 }
 
 void draw() {
-  MoveCamera();
-  UpdateAudioParameters(condition);
-  CalibrateValues();
-
-  float brightness_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 70, 255);
-  float brightness_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
-  float brightness_m_inner = map(frq_m, minFrq*0.9, maxFrq*1.1, 127, 255);
-  float orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.1);
-  float rotationSpeed = map(amp_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.1);
 
   background(0);
   lights();
-  
   colorMode(HSB);
   strokeWeight(2);
+
+
+  MoveCamera();
+  UpdateAudioParameters(condition);
+  CalibrateValues();
+  MapValues();
 
   //OuterShape
   stroke(hu%255, 255, 255);
@@ -118,16 +120,12 @@ void draw() {
   OuterShapeB.UpdateValues(m);
   star5A.UpdateValues(m);
   star5B.UpdateValues(m);
-  //m = map(amp_rt, 0, maxAmp, 0, 5);
-  //InnerShapeA.UpdateValues(m);
-  //InnerShapeB.UpdateValues(m);
 
   lod = 25;
-  PVector[][] v = CalculateVertices(OuterShapeA, OuterShapeB, false);
-  PVector[][] v2 = CalculateVertices(star5B, star5A, false);
-  PVector[][] v3 = CalculateVertices(InnerShapeA, InnerShapeB, true);
-
-  DrawShape(v);
+  PVector[][] backgroundShape = CalculateVertices(OuterShapeA, OuterShapeB, false);
+  PVector[][] centerShape = CalculateVertices(star5B, star5A, false);
+  PVector[][] orbitShape = CalculateVertices(InnerShapeA, InnerShapeB, true);
+  DrawShape(backgroundShape);
 
   //Center Shape
   pushMatrix();
@@ -135,15 +133,10 @@ void draw() {
   translate(0, 0, -250);
   fill(255-(hu%255), 255, brightness_m_inner);
   noStroke();
-  DrawShape(v2);
+  DrawShape(centerShape);
 
   //Orbiting Shapes:
-  //lod = 25;
-  //colorMode(RGB);
-  
   fill(127+(hu%255), brightness_rt, brightness_rt);  
-  
-  //stroke(255-col_m,255-col_m,col_m);
   noStroke();
   strokeWeight(20);
 
@@ -156,7 +149,7 @@ void draw() {
   rotateY(rot);
   rotateZ(rot);
   scale(0.15);
-  DrawShape(v3);
+  DrawShape(orbitShape);
   popMatrix();
 
   pushMatrix();
@@ -169,7 +162,7 @@ void draw() {
   rotateY(rot);
   rotateZ(rot);
   scale(0.15);
-  DrawShape(v3);
+  DrawShape(orbitShape);
   popMatrix();
 
   pushMatrix();
@@ -182,48 +175,8 @@ void draw() {
   rotateY(rot);
   rotateZ(rot);
   scale(0.15);
-  DrawShape(v3);
+  DrawShape(orbitShape);
   popMatrix();
-
-  pushMatrix();
-  //orbit
-  rotateX(-orbit);
-  rotateY(-orbit);
-  rotateZ(-orbit);
-  translate(0, -250, 0);
-  //local rotation
-  rotateX(rot);
-  rotateY(rot);
-  rotateZ(rot);
-  scale(0.15);
-  DrawShape(v3);
-  popMatrix();
-
-  pushMatrix();
-  //orbit
-  rotateX(-orbit);
-  rotateY(-orbit);
-  translate(250, 0, 0);
-  //local rotation
-  rotateX(rot);
-  rotateY(rot);
-  rotateZ(rot);
-  scale(0.15);
-  DrawShape(v3);
-  popMatrix();
-
-  pushMatrix();
-  //orbit
-  rotateY(-orbit);
-  translate(-250, 0, 0);
-  //local rotation
-  rotateX(rot);
-  rotateY(rot);
-  rotateZ(rot);
-  scale(0.15);
-  DrawShape(v3);
-  popMatrix();
-
 
   popMatrix();
 
@@ -340,6 +293,15 @@ void UpdateAudioParameters(char _condition) {
   } else {
     //error
   }
+}
+
+
+void MapValues() {
+  brightness_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 70, 255);
+  brightness_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
+  brightness_m_inner = map(frq_m, minFrq*0.9, maxFrq*1.1, 127, 255);
+  orbitSpeed = map(amp_rt, 0, maxAmp, 0.001, 0.1);
+  rotationSpeed = map(amp_rt, minFrq*0.9, maxFrq*1.1, 0.001, 0.1);
 }
 
 
