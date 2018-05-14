@@ -4,7 +4,7 @@ import ddf.minim.spi.*;
 import peasy.*;
 
 static int participantNumber = 0;
-String fileHeader = "elapsedTime,eventRecognized_tap,eventRecognized_hold,frq_rt, col_rt, frq_m, col_m, amp_rt,orbitSpeed,amp_m,shape_m_value, framerate";
+String fileHeader = "elapsedTime,eventRecognized_tap,eventRecognized_hold,frq_rt, col_rt, frq_m, col_m, amp_rt,orbitSpeed,amp_m,shape_m_value,framerate,amp_norm,frq_norm";
 char condition = 'A';
 PrintWriter data;
 String filename;
@@ -34,7 +34,7 @@ float noiseIndex = 0;
 float hu = 0;
 float rot = 0;
 float orbit = 0;
-float amp_m, frq_m, amp_rt, frq_rt;
+float amp_m, frq_m, amp_rt, frq_rt, amp_norm, frq_norm;
 float minAmp, maxAmp, minFrq, maxFrq;
 float calibrationAmp = 0.20; //this value needs to be calibrated for each environment
 //In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
@@ -195,7 +195,7 @@ void draw() {
   noiseIndex += 0.005;
   hu += 0.01;
   if (recordData)
-    data.println(millis()+","+eventRecognized_tap+","+eventRecognized_hold+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+orbitSpeed+","+amp_m+","+m+","+frameRate);
+    data.println(millis()+","+eventRecognized_tap+","+eventRecognized_hold+amp_norm+","+frq_norm+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+orbitSpeed+","+amp_m+","+m+","+frameRate);
 
   eventRecognized_tap = 0;
 
@@ -319,6 +319,9 @@ void UpdateAudioParameters(char _condition) {
 
 
 void MapValues() {
+  amp_norm = map(amp_rt, 0, maxAmp, 0, 1);
+  frq_norm = map(frq_rt, minFrq, maxFrq, 0, 1);
+  
   brightness_rt = map(frq_rt, minFrq*0.9, maxFrq*1.1, 70, 255);
   brightness_m = map(frq_m, minFrq*0.9, maxFrq*1.1, 0, 255);
   brightness_m_inner = map(frq_m, minFrq*0.9, maxFrq*1.1, 127, 255);
