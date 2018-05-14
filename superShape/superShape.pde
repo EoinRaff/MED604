@@ -292,11 +292,12 @@ void EndTest() {
   data.close();  
   recordData = false;
   println("Test Finished. Ready for Next Test.");
+  condition = ' ';
   PrintInstructions();
 }
 
 void UpdateAudioParameters(char _condition) {
-  if (_condition == 'A' || _condition == ' ') {
+  if (_condition == 'A') {
     //Reactive to Mic Input
     amp_m = AP.meanAmplitude();
     amp_rt = AP.rtAmplitude();
@@ -308,8 +309,11 @@ void UpdateAudioParameters(char _condition) {
     amp_rt = map(noise(noiseIndex), 0, 1, minAmp*0.25, maxAmp*0.75);
     frq_m = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
     frq_rt = map(noise(noiseIndex), 0, 1, minFrq, maxFrq);
-  } else {
-    //error
+  } else if (_condition == ' ')  {
+    amp_m = 0;
+    amp_rt = 0;
+    frq_m = 0;
+    frq_rt = 0;
   }
 }
 
