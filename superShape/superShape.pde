@@ -48,7 +48,7 @@ float rotationSpeed;
 void setup() {
   println("Performing Initial Setup");
   println("Generating Perlin Noise Seed");
-  noiseSeed(0);
+  //noiseSeed(0);
   println("Locking framerate @ 60fps");
   frameRate(60);
   //size(900, 720, P3D);
@@ -195,7 +195,7 @@ void draw() {
   noiseIndex += 0.005;
   hu += 0.01;
   if (recordData)
-    data.println(millis()+","+eventRecognized_tap+","+eventRecognized_hold+amp_norm+","+frq_norm+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+orbitSpeed+","+amp_m+","+m+","+frameRate);
+    data.println(millis()+","+eventRecognized_tap+","+eventRecognized_hold+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+orbitSpeed+","+amp_m+","+m+","+frameRate+","+amp_norm+","+frq_norm);
 
   eventRecognized_tap = 0;
 
@@ -261,7 +261,7 @@ void StartTest(char _condition) {
     println("file loaded");
     filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
   } else if (condition == 'B') {
-    noiseIndex = 0;
+    //noiseIndex = 0;
     player = playerB;
     filename = "participant_" +participantNumber + "_condition_" + condition+"_"+ currentTime+ "_data.txt";
   } else if (condition == ' ') {
