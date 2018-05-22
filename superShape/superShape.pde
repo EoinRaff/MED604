@@ -3,12 +3,9 @@ import ddf.minim.analysis.*;
 import ddf.minim.spi.*;
 import peasy.*;
 
-static int participantNumber = 0;
-String fileHeader = "elapsedTime,eventRecognized_tap,eventRecognized_hold,frq_rt, col_rt, frq_m, col_m, amp_rt,orbitSpeed,amp_m,shape_m_value,framerate,amp_norm,frq_norm";
-char condition = 'A';
-PrintWriter data;
-String filename;
+int participantNumber = 0;
 
+PeasyCam cam;
 Minim minim;
 AudioProcessing AP;
 AudioPlayer player, playerA, playerB;
@@ -16,51 +13,42 @@ AudioPlayer player, playerA, playerB;
 boolean recordData;
 
 float m = 0;
-
-PeasyCam cam;
 int lod = 25;
-int loggedTotal;
 float r = 200;  
 
-Shape TestShapeA, TestShapeB, OuterShapeA, OuterShapeB, InnerShapeA, InnerShapeB, spinningTopA, spinningTopB;
+Shape OuterShapeA, OuterShapeB; 
+Shape InnerShapeA, InnerShapeB;
+Shape star5A, star5B;
 
-Shape star5A;
-Shape star5B;
-
-int index = 0;
+PrintWriter data;
+String filename;
+char condition = 'A';
 int eventRecognized_tap = 0;
 int eventRecognized_hold = 0;
 float noiseIndex = 0;
-float hu = 0;
-float rot = 0;
+float hue = 0;
+float spin = 0;
 float orbit = 0;
 float amp_m, frq_m, amp_rt, frq_rt, amp_norm, frq_norm;
 float minAmp, maxAmp, minFrq, maxFrq;
-float calibrationAmp = 0.20; //this value needs to be calibrated for each environment
-//In this instance, it represents the sound of the train door, while recorded from Adam's Laptop using Samson microphone.
-
-float brightness_rt;
-float brightness_m;
-float brightness_m_inner;
-float orbitSpeed;
-float rotationSpeed;
+float brightness_rt, brightness_m, brightness_m_inner;
+float orbitSpeed, rotationSpeed;
 
 void setup() {
   println("Performing Initial Setup");
-  println("Generating Perlin Noise Seed");
-  //noiseSeed(0);
   println("Locking framerate @ 60fps");
   frameRate(60);
-  //size(900, 720, P3D);
-  //size(96, 52, P3D);
   fullScreen(P3D, 2);
 
   println("Preparing Camera");
   cam = new PeasyCam(this, 150);
+  
   println("Preparing Minim");
   minim = new Minim(this);
+  
   println("Initializing Audio Processing script");
   AP = new AudioProcessing(minim);
+
   println("Loading Audio Files");
   playerA = minim.loadFile("Audio/soundscape_A.wav");
   playerB = minim.loadFile("Audio/soundscape_B.wav");
@@ -68,27 +56,14 @@ void setup() {
   // Create Shapes
   println("Creating Initial Shape Parameters");
 
-
   star5A  = new Shape(5, 0.38, 1.12, 0.47);
   star5B  = new Shape(10, 0.71, 0.79, 1.12);
 
-  Shape speakerA  = new Shape(4.0, 0.3, 0.3, 0.3);
-  Shape speakerB  = new Shape(0.18, 1, 1, 0.5);
-
-  Shape flowerA = new Shape(10.0, 0.79, 0.64, 1.24);
-  Shape flowerB = new Shape(10.0, 2.0, 2.0, 2.0);
-
-  Shape lemonA  = new Shape(18.9, 1.0, 1.0, 0.5);
-  Shape lemonB  = new Shape(3.0, 0.3, 0.3, 0.85);
+  InnerShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
+  InnerShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
 
   OuterShapeA = new Shape(10.0, 0.79, 0.64, 1.24);
   OuterShapeB = new Shape(10.0, 2.0, 2.0, 2.0);
-
-  InnerShapeA = new Shape(3.99, 0.56, 0.59, 1.59);
-  InnerShapeB= new Shape(3.29, 1.31, 1.66, 0.96);
-
-  InnerShapeA = flowerA;
-  InnerShapeB = flowerB;
 
   println("Initializing Values for Ampitude and Frequency Calibration");
   minAmp = 999999;
@@ -98,55 +73,51 @@ void setup() {
 
   recordData = false;
   println("Inital Setup Complete.");
-  println("*** *** *** *** **** *** *** ***");
+  println();
   println("Please perform final checks:");
-  println("-Check System Audio set to 34."); //choose value
+  println("-Check System Audio set to 34.");
   println("-Perform initial run to calibrate values.");
   println("-Check that Zoom recording level set to 100.");
-  println("*** *** *** *** *** *** *** ***");
-  println(" -   -   -   -   -   -   -   - ");
-  println("*** *** *** *** *** *** *** ***");
-
   PrintInstructions();
+  
+  colorMode(HSB);
 }
 
 void draw() {
-
   background(0);
   lights();
-  colorMode(HSB);
   strokeWeight(2);
-
 
   MoveCamera();
   UpdateAudioParameters(condition);
   CalibrateValues();
   MapValues();
 
-  //OuterShape
-  stroke(hu%255, 255, 255);
-  fill(255-(hu%255), 255, brightness_m);
   OuterShapeA.UpdateValues(m);
   OuterShapeB.UpdateValues(m);
   star5A.UpdateValues(m);
   star5B.UpdateValues(m);
 
-  lod = 25;
-  PVector[][] backgroundShape = CalculateVertices(OuterShapeA, OuterShapeB, false);
-  PVector[][] centerShape = CalculateVertices(star5B, star5A, false);
-  PVector[][] orbitShape = CalculateVertices(InnerShapeA, InnerShapeB, true);
+  //OuterShape
+  stroke(hue % 255, 255, 255);
+  fill(255-(hue % 255), 255, brightness_m);
+  
+  PVector[][] backgroundShape = CalculateVertices(OuterShapeA, OuterShapeB);
+  PVector[][] centerShape = CalculateVertices(star5B, star5A);
+  PVector[][] orbitShape = CalculateVertices(InnerShapeA, InnerShapeB);
+  
   DrawShape(backgroundShape);
 
   //Center Shape
   pushMatrix();
   scale(0.2);
   translate(0, 0, -250);
-  fill(255-(hu%255), 255, brightness_m_inner);
+  fill(255-(hue % 255), 255, brightness_m_inner);
   noStroke();
   DrawShape(centerShape);
 
   //Orbiting Shapes:
-  fill(127+(hu%255), brightness_rt, brightness_rt);  
+  fill(127+(hue % 255), brightness_rt, brightness_rt);  
   noStroke();
   strokeWeight(20);
 
@@ -155,47 +126,46 @@ void draw() {
   rotateX(orbit);
   translate(0, 0, 250);
   //local rotation
-  rotateX(rot);
-  rotateY(rot);
-  rotateZ(rot);
+  rotateX(spin);
+  rotateY(spin);
+  rotateZ(spin);
   scale(0.15);
   DrawShape(orbitShape);
   popMatrix();
 
   pushMatrix();
   //orbit
-  //rotateX(orbit);
   rotateY(orbit);
   translate(250, 0, 0);
   //local rotation
-  rotateX(rot);
-  rotateY(rot);
-  rotateZ(rot);
+  rotateX(spin);
+  rotateY(spin);
+  rotateZ(spin);
   scale(0.15);
   DrawShape(orbitShape);
   popMatrix();
 
   pushMatrix();
   //orbit
-  //rotateY(orbit);
   rotateZ(orbit);
   translate(0, 250, 0);
   //local rotation
-  rotateX(rot);
-  rotateY(rot);
-  rotateZ(rot);
+  rotateX(spin);
+  rotateY(spin);
+  rotateZ(spin);
   scale(0.15);
   DrawShape(orbitShape);
   popMatrix();
 
   popMatrix();
 
-  rot += rotationSpeed;
+  spin += rotationSpeed;
   orbit += orbitSpeed;
   noiseIndex += 0.005;
-  hu += 0.01;
+  hue += 0.01;
+  
   if (recordData)
-    data.println(millis()+","+eventRecognized_tap+","+eventRecognized_hold+","+frq_rt +","+ brightness_rt+","+frq_m+","+brightness_m+","+amp_rt+","+orbitSpeed+","+amp_m+","+m+","+frameRate+","+amp_norm+","+frq_norm);
+    data.println(millis()+"," + eventRecognized_tap + "," + eventRecognized_hold + "," + frq_rt  + "," +  brightness_rt + "," + frq_m + "," + brightness_m + "," + amp_rt + "," + orbitSpeed + "," + amp_m + "," + m + "," + frameRate + "," + amp_norm + "," + frq_norm);
 
   eventRecognized_tap = 0;
 
@@ -342,7 +312,7 @@ float supershape(float theta, Shape S) {
 }
 
 
-PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
+PVector[][] CalculateVertices(Shape s1, Shape s2) {
   PVector[][] vertices = new PVector[lod + 1][lod + 1];
   for (int i = 0; i < lod+1; i++) {
     float lat = map(i, 0, lod, -HALF_PI, HALF_PI);
@@ -353,12 +323,7 @@ PVector[][] CalculateVertices(Shape s1, Shape s2, boolean RT) {
       float x = r * r1 * cos(lon) * r2 * cos(lat);
       float y = r * r1 * sin(lon) * r2 *cos(lat);
       float z = r * r2 * sin(lat);
-      float offset = 0;
-      if (RT) {
-        //remove this boolean if we want to remove offset
-        offset = random(-100, 100)*amp_rt;
-      }
-      vertices[i][j] = new PVector(x+ offset, y+ offset, z + offset);
+      vertices[i][j] = new PVector(x, y, z);
     }
   }
   return vertices;
@@ -401,8 +366,8 @@ void CalibrateValues() {
 }
 
 void PrintInstructions() {
-  println("----------------------------------------------------------------------");
+  println("--------------------------------------------------------------");
   println("Press <a> to begin condition A. Press <b> to begin condition B.");
   println("Press <p> to prepare for next participant. \nPress <e> to end test early.");
-  println("----------------------------------------------------------------------");
+  println("--------------------------------------------------------------");
 }
